@@ -41,7 +41,11 @@ function ProjectVisual({tone}:{tone:string}){
   return <div className={`project-visual ${tone}`}><div className="browser"><div className="browser-top"><i/><i/><i/><span>farsith.build</span></div><div className="dashboard"><div className="dash-side"><b>FF</b><span/><span/><span/><span/></div><div className="dash-main"><div className="dash-heading"><div/><div/></div><div className="dash-chart"><i/><i/><i/><i/><i/><i/></div><div className="dash-row"><div/><div/><div/></div></div></div></div><div className="project-orb"/></div>
 }
 
-export default function Home(){
+export default function Home(){\n  const { scrollYProgress } = useScroll();
+  const heroY = useTransform(scrollYProgress, [0, 0.22], [0, -90]);
+  const heroScale = useTransform(scrollYProgress, [0, 0.22], [1, 0.94]);
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.18], [1, 0.35]);
+
   const [loading,setLoading]=useState(true);
   useEffect(()=>{const t=setTimeout(()=>setLoading(false),900);return()=>clearTimeout(t)},[]);
   const cursor=useRef<HTMLDivElement>(null);
