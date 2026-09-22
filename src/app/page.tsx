@@ -5,72 +5,295 @@ import Image from 'next/image';
 import { motion, useMotionValue, useSpring, useScroll, useTransform } from 'framer-motion';
 import { site, stack, projects } from '../data/site';
 
-function WorkspaceDepth(){
-  return <div className="workspace-depth" aria-hidden="true">
-    <div className="depth-ring ring-one"/><div className="depth-ring ring-two"/>
-    <div className="depth-panel panel-left"><span>01</span><b>BUILD</b><small>ship with intent</small></div>
-    <div className="depth-panel panel-right"><span>02</span><b>IMPROVE</b><small>iterate with purpose</small></div>
-    <div className="depth-particle particle-one"/><div className="depth-particle particle-two"/><div className="depth-particle particle-three"/>
-  </div>
+const journeyStages = [
+  { id: 'home', label: 'HERO', image: '/avatar/hero.png', alt: 'Farsith avatar in the hero workspace', angle: 'front' },
+  { id: 'about', label: 'ABOUT', image: '/avatar/confident.png', alt: 'Farsith avatar in a confident pose', angle: 'three-quarter' },
+  { id: 'projects', label: 'PROJECTS', image: '/avatar/laptop.png', alt: 'Farsith avatar working with a laptop', angle: 'work' },
+  { id: 'toolkit', label: 'TOOLKIT', image: '/avatar/pointing.png', alt: 'Farsith avatar pointing toward the toolkit', angle: 'interaction' },
+  { id: 'experience', label: 'EXPERIENCE', image: '/avatar/side.png', alt: 'Farsith avatar shown from the side', angle: 'side' },
+  { id: 'contact', label: 'CONTACT', image: '/avatar/smile.png', alt: 'Farsith avatar smiling confidently', angle: 'front' },
+];
+
+function Nav() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <header className="nav-wrap">
+      <nav className="nav">
+        <a href="#home" className="logo" aria-label="Farsith Fawzer home">FF</a>
+        <div className="nav-links">
+          {journeyStages.slice(0, -1).map((stage) => (
+            <a key={stage.id} href={`#${stage.id}`}>{stage.label}</a>
+          ))}
+          <a href="#contact">Contact</a>
+        </div>
+        <a className="nav-cta" href={`mailto:${site.email}`}>Let’s Talk</a>
+        <button className="menu" onClick={() => setOpen((value) => !value)} aria-label="Toggle menu" aria-expanded={open}>
+          <span />
+          <span />
+        </button>
+      </nav>
+      {open && (
+        <div className="mobile-menu">
+          {journeyStages.map((stage) => (
+            <a key={stage.id} href={`#${stage.id}`} onClick={() => setOpen(false)}>{stage.label}</a>
+          ))}
+        </div>
+      )}
+    </header>
+  );
 }
 
-function GlowScene(){
-  const x=useMotionValue(0), y=useMotionValue(0);
-  const sx=useSpring(x,{stiffness:90,damping:20}), sy=useSpring(y,{stiffness:90,damping:20});
-  const zero=useMotionValue(0);
-  const sz=useSpring(zero,{stiffness:90,damping:20});
-  return <div className="scene" onMouseMove={e=>{const r=e.currentTarget.getBoundingClientRect();x.set((e.clientX-r.left-r.width/2)/20);y.set((e.clientY-r.top-r.height/2)/20)}} onMouseLeave={()=>{x.set(0);y.set(0)}}>
-    <div className="scene-grid"/><WorkspaceDepth/>
-    <motion.div className="orb orb-a" style={{x:sx,y:sy}}/>
-    <motion.div className="avatar-shell" style={{x:sx, y:sy}}>
-      <div className="avatar-glow"/>
-      <Image src="/avatar/hero.png" alt="Farsith avatar, front view" fill sizes="(max-width: 900px) 70vw, 35vw" className="avatar-img" priority/>
-    </motion.div>
-    <motion.div className="floating-card card-code" style={{x:sz, y:sy}}><span>BUILD</span><b>real-world software</b></motion.div>
-    <div className="floating-card card-stack"><span>STACK</span><b>React · Java · Spring</b></div>
-    <div className="desk"><div className="laptop"><div className="screen-lines"/><span>FF</span></div><div className="cup">◎</div><div className="book">SYSTEMS<br/>DESIGN</div></div>
-  </div>
+function WorkspaceDecor({ progress }: { progress: ReturnType<typeof useScroll>['scrollYProgress'] }) {
+  const lightX = useTransform(progress, [0, 1], ['12%', '78%']);
+  const lightY = useTransform(progress, [0, 1], ['22%', '64%']);
+  const gridRotate = useTransform(progress, [0, 1], [64, 76]);
+  const gridY = useTransform(progress, [0, 1], ['0%', '14%']);
+
+  return (
+    <div className="journey-decor" aria-hidden="true">
+      <motion.div className="journey-light" style={{ left: lightX, top: lightY }} />
+      <motion.div className="journey-grid" style={{ rotateX: gridRotate, y: gridY }} />
+      <div className="journey-window" />
+      <div className="journey-monitor monitor-one"><span>01</span><i /><i /><i /></div>
+      <div className="journey-monitor monitor-two"><span>FF / SYSTEM</span><i /><i /><i /></div>
+      <div className="journey-orb" />
+      <div className="journey-particle particle-a" />
+      <div className="journey-particle particle-b" />
+      <div className="journey-particle particle-c" />
+    </div>
+  );
 }
 
-function Nav(){
-  const [open,setOpen]=useState(false);
-  return <header className="nav-wrap"><nav className="nav"><a href="#home" className="logo">FF</a><div className="nav-links">{[['About','#about'],['Toolkit','#toolkit'],['Projects','#projects'],['Experience','#experience'],['Contact','#contact']].map(([t,h])=><a key={h} href={h}>{t}</a>)}</div><a className="nav-cta" href={`mailto:${site.email}`}>Let’s Talk</a><button className="menu" onClick={()=>setOpen(!open)} aria-label="Toggle menu"><span/><span/></button></nav>{open&&<div className="mobile-menu">{[['About','#about'],['Toolkit','#toolkit'],['Projects','#projects'],['Experience','#experience'],['Contact','#contact']].map(([t,h])=><a key={h} href={h} onClick={()=>setOpen(false)}>{t}</a>)}</div>}</header>
+function AvatarStage({ progress, activeStage }: { progress: ReturnType<typeof useScroll>['scrollYProgress']; activeStage: number }) {
+  const avatarY = useTransform(progress, [0, 1], ['1%', '-3%']);
+  const avatarScale = useTransform(progress, [0, 0.18, 0.42, 0.7, 1], [1, 1.04, 0.96, 1.08, 1]);
+  const avatarRotate = useTransform(progress, [0, 0.2, 0.45, 0.72, 1], [0, -2, 3, -4, 0]);
+  const cameraX = useTransform(progress, [0, 1], ['0%', '7%']);
+
+  return (
+    <div className={`avatar-stage stage-${activeStage}`}>
+      <WorkspaceDecor progress={progress} />
+      <motion.div className="avatar-camera" style={{ x: cameraX, y: avatarY, scale: avatarScale, rotateY: avatarRotate }}>
+        <div className="avatar-halo" />
+        <div className="avatar-floor" />
+        <div className="avatar-image-stack">
+          {journeyStages.map((stage, index) => (
+            <motion.div
+              key={stage.id}
+              className={`journey-avatar avatar-${index}`}
+              animate={{ opacity: activeStage === index ? 1 : 0, scale: activeStage === index ? 1 : 0.985, filter: activeStage === index ? 'blur(0px)' : 'blur(3px)' }}
+              transition={{ duration: 0.45, ease: 'easeOut' }}
+              aria-hidden={activeStage !== index}
+            >
+              <Image src={stage.image} alt={stage.alt} fill sizes="(max-width: 900px) 80vw, 42vw" priority={index === 0} />
+            </motion.div>
+          ))}
+        </div>
+      </motion.div>
+      <div className="stage-surface" />
+      <div className="stage-caption">
+        <span>SCROLL STATE / {String(activeStage + 1).padStart(2, '0')}</span>
+        <strong>{journeyStages[activeStage].label}</strong>
+        <small>{journeyStages[activeStage].angle} view</small>
+      </div>
+    </div>
+  );
 }
 
-function ProjectVisual({tone}:{tone:string}){
-  return <div className={`project-visual ${tone}`}><div className="browser"><div className="browser-top"><i/><i/><i/><span>farsith.build</span></div><div className="dashboard"><div className="dash-side"><b>FF</b><span/><span/><span/><span/></div><div className="dash-main"><div className="dash-heading"><div/><div/></div><div className="dash-chart"><i/><i/><i/><i/><i/><i/></div><div className="dash-row"><div/><div/><div/></div></div></div></div><div className="project-orb"/></div>
+function JourneyProgress({ activeStage }: { activeStage: number }) {
+  return (
+    <aside className="journey-progress" aria-label="Portfolio sections">
+      <div className="progress-line" />
+      {journeyStages.map((stage, index) => (
+        <a
+          key={stage.id}
+          href={`#${stage.id}`}
+          className={activeStage === index ? 'active' : ''}
+          aria-current={activeStage === index ? 'step' : undefined}
+        >
+          <span>{String(index + 1).padStart(2, '0')}</span>
+          <b>{stage.label}</b>
+        </a>
+      ))}
+    </aside>
+  );
 }
 
-export default function Home(){\n  const { scrollYProgress } = useScroll();
-  const heroY = useTransform(scrollYProgress, [0, 0.22], [0, -90]);
-  const heroScale = useTransform(scrollYProgress, [0, 0.22], [1, 0.94]);
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.18], [1, 0.35]);
+function HeroChapter() {
+  return (
+    <section id="home" className="journey-chapter hero-chapter">
+      <div className="chapter-copy">
+        <div className="eyebrow">COLOMBO · SRI LANKA / SOFTWARE DEVELOPER</div>
+        <h1>FARSITH<br /><em>FAWZER</em></h1>
+        <p>Building ideas into <strong>real-world software.</strong></p>
+        <div className="hero-actions">
+          <a className="btn primary" href="#projects">Explore My Work <span>↘</span></a>
+          <a className="btn ghost" href={`mailto:${site.email}`}>Let’s Connect <span>↗</span></a>
+        </div>
+        <div className="hero-meta"><span>FULL-STACK</span><span>WEB APPLICATIONS</span><span>SOFTWARE ENGINEERING</span></div>
+      </div>
+      <div className="chapter-note"><span>01 / ENTER THE WORLD</span><p>The portfolio moves with the avatar. Scroll to change the camera, environment and point of view.</p></div>
+    </section>
+  );
+}
 
-  const [loading,setLoading]=useState(true);
-  useEffect(()=>{const t=setTimeout(()=>setLoading(false),900);return()=>clearTimeout(t)},[]);
-  const cursor=useRef<HTMLDivElement>(null);
-  useEffect(()=>{const move=(e:MouseEvent)=>{if(cursor.current){cursor.current.style.transform=`translate3d(${e.clientX}px,${e.clientY}px,0)`}};window.addEventListener('mousemove',move);return()=>window.removeEventListener('mousemove',move)},[]);
-  return <>
-    {loading&&<motion.div className="loader" initial={{opacity:1}} animate={{opacity:0}} transition={{duration:.45,delay:.65}}><div className="loader-mark">FF</div><div>FARSITH FAWZER</div><small>SOFTWARE DEVELOPER</small></motion.div>}
-    <div ref={cursor} className="cursor"/>
-    <Nav/>
-    <main>
-      <motion.section id="home" className="hero" style={{scale:heroScale, opacity:heroOpacity, y:heroY}}><div className="hero-copy"><div className="eyebrow">COLOMBO · SRI LANKA / SOFTWARE DEVELOPER</div><h1>FARSITH<br/><em>FAWZER</em></h1><p>Building ideas into <strong>real-world software.</strong></p><div className="hero-actions"><a className="btn primary" href="#projects">Explore My Work <span>↘</span></a><a className="btn ghost" href={`mailto:${site.email}`}>Let’s Connect <span>↗</span></a></div><div className="hero-meta"><span>FULL-STACK</span><span>WEB APPLICATIONS</span><span>SOFTWARE ENGINEERING</span></div></div><GlowScene/><div className="scroll-cue"><span>SCROLL TO EXPLORE</span><i/></div></section>
+function AboutChapter() {
+  return (
+    <section id="about" className="journey-chapter about-chapter">
+      <div className="chapter-copy">
+        <div className="section-kicker">02 / MEET FARSITH</div>
+        <h2>BUILDING SOFTWARE<br /><span>WITH PURPOSE.</span></h2>
+        <p className="lead">Software Developer with hands-on experience building modern web applications across e-commerce, point-of-sale, digital platforms, healthcare, and accessibility-focused systems.</p>
+        <p>Experienced across frontend development, backend integration, databases, authentication and machine-learning-powered applications. The focus is practical: understand the problem, build the system, and make the experience feel considered.</p>
+        <div className="signature">BUILD · SOLVE · IMPROVE · REPEAT.</div>
+      </div>
+      <div className="chapter-card about-facts">
+        <span>THE PERSON BEHIND THE SOFTWARE</span>
+        <div><b>Full-Stack Development</b><small>Web applications and real-world systems</small></div>
+        <div><b>Software Engineering</b><small>Problem solving, architecture and iteration</small></div>
+        <div><b>SLIIT · 2022 — March 2027</b><small>B.Sc. (Hons) Information Technology — Software Engineering</small></div>
+      </div>
+    </section>
+  );
+}
 
-      </motion.section>
+function ProjectsChapter() {
+  return (
+    <section id="projects" className="journey-chapter projects-chapter">
+      <div className="chapter-copy">
+        <div className="section-kicker">03 / SELECTED WORK</div>
+        <h2>WHAT I <em>BUILD.</em></h2>
+        <p>As the camera moves behind the workstation, each project becomes part of the environment.</p>
+      </div>
+      <div className="project-rail">
+        {projects.map((project) => (
+          <article key={project.id} className={`journey-project journey-project-${project.tone}`}>
+            <span>{project.id}</span>
+            <h3>{project.title}</h3>
+            <h4>{project.subtitle}</h4>
+            <p>{project.description}</p>
+            <small>{project.tech}</small>
+            <a href="#contact">Discuss this build ↗</a>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
 
-      <section id="about" className="section about"><div className="section-kicker">01 / MEET FARSITH</div><div className="about-grid"><div><h2>BUILDING SOFTWARE<br/><span>WITH PURPOSE.</span></h2><p className="lead">Software Developer with hands-on experience building modern web applications across e-commerce, point-of-sale, digital platforms, healthcare, and accessibility-focused systems.</p><p>Experienced across frontend development, backend integration, databases, authentication and machine-learning-powered applications. The focus is practical: understand the problem, build the system, and make the experience feel considered.</p><div className="signature">BUILD · SOLVE · IMPROVE · REPEAT.</div></div><div className="about-stage"><Image src="/avatar/confident.png" alt="Farsith avatar, confident expression" fill sizes="40vw"/><div className="stage-label">FARSITH / 01</div></div></div><div className="stat-row"><div><span>FOCUS</span><b>Full-Stack<br/>Development</b></div><div><span>SPECIALIZATION</span><b>Web<br/>Applications</b></div><div><span>CURRENTLY</span><b>Software<br/>Engineering</b></div><div><span>EDUCATION</span><b>B.Sc. (Hons)<br/>IT — SE</b></div></div></section>
+function ToolkitChapter() {
+  return (
+    <section id="toolkit" className="journey-chapter toolkit-chapter">
+      <div className="chapter-copy">
+        <div className="section-kicker">04 / MY TOOLKIT</div>
+        <h2>THE TOOLS<br /><span>BEHIND THE WORK.</span></h2>
+        <p>A practical stack spanning interface design, application logic, data, infrastructure and applied machine learning.</p>
+      </div>
+      <div className="toolkit-orbit">
+        {stack.map(([name, desc], index) => (
+          <motion.div key={name} className="orbit-tech" whileHover={{ y: -6, scale: 1.03 }}>
+            <span>{String(index + 1).padStart(2, '0')}</span>
+            <b>{name}</b>
+            <small>{desc}</small>
+          </motion.div>
+        ))}
+      </div>
+    </section>
+  );
+}
 
-      <section id="toolkit" className="section toolkit"><div className="section-kicker">02 / MY TOOLKIT</div><div className="toolkit-head"><h2>THE TOOLS<br/><span>BEHIND THE WORK.</span></h2><p>A practical stack spanning interface design, application logic, data, infrastructure and applied machine learning.</p></div><div className="constellation">{stack.map(([name,desc],i)=><motion.div key={name} className="tech" whileHover={{scale:1.04, y:-6}} style={{'--i':i} as React.CSSProperties}><span>{String(i+1).padStart(2,'0')}</span><b>{name}</b><small>{desc}</small></motion.div>)}</div></section>
+function ExperienceChapter() {
+  return (
+    <section id="experience" className="journey-chapter experience-chapter">
+      <div className="chapter-copy">
+        <div className="section-kicker">05 / EXPERIENCE & JOURNEY</div>
+        <h2>FROM <em>SUPPORT</em><br />TO SOFTWARE.</h2>
+        <p>Professional experience shaped by structured troubleshooting, customer-facing problem solving, cross-functional collaboration and software engineering.</p>
+      </div>
+      <div className="experience-path">
+        <div className="experience-node"><span>2020 — 2024</span><div><b>Dialog Axiata PLC</b><small>Customer Service Associate → Senior Customer Service Associate</small></div></div>
+        <div className="experience-node"><span>2024 — PRESENT</span><div><b>Sysco Labs Technologies</b><small>Analyst — L1 Operations Support</small></div></div>
+        <div className="experience-node"><span>NOW</span><div><b>Software Engineering</b><small>B.Sc. (Hons) IT — Software Engineering · SLIIT</small></div></div>
+      </div>
+    </section>
+  );
+}
 
-      <section id="projects" className="projects"><div className="section project-intro"><div className="section-kicker">03 / SELECTED WORK</div><h2>WHAT I <em>BUILD.</em></h2><p>Case-study style snapshots of systems, products and research experiences built across different problem spaces.</p></div>{projects.map((p,i)=><article className={`project project-${p.tone}`} key={p.id}><div className="project-number">{p.id}</div><div className="project-copy"><div className="project-tag">FEATURED PROJECT</div><h3>{p.title}</h3><h4>{p.subtitle}</h4><p>{p.description}</p><div className="techline">{p.tech}</div><div className="contribution"><span>CONTRIBUTION</span>{p.contribution}</div><div className="project-actions">{p.github&&<a href={p.github}>GitHub ↗</a>}{p.live&&<a href={p.live}>Live Demo ↗</a>}<a href="#contact">Discuss this build ↗</a></div></div><ProjectVisual tone={p.tone}/></article>)}</section>
+function ContactChapter() {
+  return (
+    <section id="contact" className="journey-chapter contact-chapter">
+      <div className="chapter-copy">
+        <div className="section-kicker">06 / LET’S BUILD SOMETHING</div>
+        <h2>HAVE AN IDEA,<br /><em>A PRODUCT, OR A PROBLEM<br />WORTH SOLVING?</em></h2>
+        <a className="contact-mail" href={`mailto:${site.email}`}>{site.email} <span>↗</span></a>
+        <div className="contact-links"><a href={site.linkedin} target="_blank" rel="noreferrer">LinkedIn ↗</a><a href={site.github} target="_blank" rel="noreferrer">GitHub ↗</a><a href={`mailto:${site.email}`}>Email ↗</a></div>
+      </div>
+      <div className="chapter-note contact-note"><span>THE JOURNEY ENDS HERE.</span><p>The next move is yours. Let’s build something meaningful.</p></div>
+    </section>
+  );
+}
 
-      <section id="experience" className="section experience"><div className="section-kicker">04 / EXPERIENCE & JOURNEY</div><div className="experience-head"><h2>FROM <em>SUPPORT</em><br/>TO SOFTWARE.</h2><p>Professional experience shaped by structured troubleshooting, customer-facing problem solving, cross-functional collaboration and software engineering.</p></div><div className="timeline"><div className="timeline-item"><div className="time">MAR 2024 — PRESENT</div><div className="dot"/><div><h3>Sysco Labs Technologies</h3><h4>Analyst — L1 Operations Support</h4><p>Structured troubleshooting, issue investigation, root-cause analysis and collaboration with engineering and finance teams to resolve technical and process issues.</p></div></div><div className="timeline-item"><div className="time">DEC 2020 — FEB 2024</div><div className="dot"/><div><h3>Dialog Axiata PLC</h3><h4>Customer Service Associate → Senior Customer Service Associate</h4><p>Career progression built through problem solving, cross-functional collaboration, customer-facing communication and service excellence.</p></div></div></div><div className="journey-card"><Image src="/avatar/side.png" alt="Farsith avatar side profile" fill sizes="30vw"/><div><span>EDUCATION</span><h3>B.Sc. (Hons) Information Technology<br/><em>Software Engineering</em></h3><p>SLIIT · 2022 — March 2027</p><small>ITIL® v4 Foundation in IT Service Management</small></div></div></section>
+export default function Home() {
+  const journeyRef = useRef<HTMLElement>(null);
+  const [loading, setLoading] = useState(true);
+  const [activeStage, setActiveStage] = useState(0);
+  const { scrollYProgress } = useScroll({ target: journeyRef, offset: ['start start', 'end end'] });
 
-      <section className="brand-section"><div className="brand-lines"><span>BUILD.</span><span>SOLVE.</span><span>IMPROVE.</span><span>REPEAT.</span></div><div className="brand-avatar"><Image src="/avatar/pointing.png" alt="Farsith avatar pointing" fill sizes="40vw"/></div><div className="brand-footer"><p>Better software.<br/><em>A brighter tomorrow.</em></p><span>04 / PERSONAL BRAND</span></div></section>
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 800);
+    return () => clearTimeout(timer);
+  }, []);
 
-      <section id="contact" className="contact"><div className="section-kicker">05 / LET’S BUILD SOMETHING</div><h2>HAVE AN IDEA,<br/><em>A PRODUCT, OR A PROBLEM<br/>WORTH SOLVING?</em></h2><a className="contact-mail" href={`mailto:${site.email}`}>{site.email} <span>↗</span></a><div className="contact-links"><a href={site.linkedin} target="_blank">LinkedIn ↗</a><a href={site.github} target="_blank">GitHub ↗</a><a href={`mailto:${site.email}`}>Email ↗</a></div></section>
-    </main>
-    <footer><div><b>FARSITH FAWZER</b><span>Software Developer</span></div><p>Build · Solve · Improve · Create Impact</p><small>© 2026 Farsith Fawzer</small></footer>
-  </>
+  useEffect(() => {
+    return scrollYProgress.on('change', (value) => {
+      const next = Math.min(journeyStages.length - 1, Math.floor(value * journeyStages.length));
+      setActiveStage(next);
+    });
+  }, [scrollYProgress]);
+
+  const cursor = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const move = (event: MouseEvent) => {
+      if (cursor.current) cursor.current.style.transform = `translate3d(${event.clientX}px,${event.clientY}px,0)`;
+    };
+    window.addEventListener('mousemove', move);
+    return () => window.removeEventListener('mousemove', move);
+  }, []);
+
+  return (
+    <>
+      {loading && (
+        <motion.div className="loader" initial={{ opacity: 1 }} animate={{ opacity: 0 }} transition={{ duration: 0.4, delay: 0.55 }}>
+          <div className="loader-mark">FF</div>
+          <div>FARSITH FAWZER</div>
+          <small>SOFTWARE DEVELOPER</small>
+        </motion.div>
+      )}
+      <div ref={cursor} className="cursor" />
+      <Nav />
+
+      <main ref={journeyRef} className="portfolio-journey">
+        <div className="journey-sticky">
+          <AvatarStage progress={scrollYProgress} activeStage={activeStage} />
+          <JourneyProgress activeStage={activeStage} />
+        </div>
+
+        <div className="journey-content">
+          <HeroChapter />
+          <AboutChapter />
+          <ProjectsChapter />
+          <ToolkitChapter />
+          <ExperienceChapter />
+          <ContactChapter />
+        </div>
+      </main>
+
+      <footer>
+        <div><b>FARSITH FAWZER</b><span>Software Developer</span></div>
+        <p>Build · Solve · Improve · Create Impact</p>
+        <small>© 2026 Farsith Fawzer</small>
+      </footer>
+    </>
+  );
 }
