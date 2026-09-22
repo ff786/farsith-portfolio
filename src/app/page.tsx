@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
-import { motion, useMotionValue, useSpring, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, type MotionValue } from 'framer-motion';
 import { site, stack, projects } from '../data/site';
 
 const journeyStages = [
@@ -44,7 +44,7 @@ function Nav() {
   );
 }
 
-function WorkspaceDecor({ progress }: { progress: ReturnType<typeof useScroll>['scrollYProgress'] }) {
+function WorkspaceDecor({ progress }: { progress: MotionValue<number> }) {
   const lightX = useTransform(progress, [0, 1], ['12%', '78%']);
   const lightY = useTransform(progress, [0, 1], ['22%', '64%']);
   const gridRotate = useTransform(progress, [0, 1], [64, 76]);
@@ -65,7 +65,7 @@ function WorkspaceDecor({ progress }: { progress: ReturnType<typeof useScroll>['
   );
 }
 
-function AvatarStage({ progress, activeStage }: { progress: ReturnType<typeof useScroll>['scrollYProgress']; activeStage: number }) {
+function AvatarStage({ progress, activeStage }: { progress: MotionValue<number>; activeStage: number }) {
   const avatarY = useTransform(progress, [0, 1], ['1%', '-3%']);
   const avatarScale = useTransform(progress, [0, 0.18, 0.42, 0.7, 1], [1, 1.04, 0.96, 1.08, 1]);
   const avatarRotate = useTransform(progress, [0, 0.2, 0.45, 0.72, 1], [0, -2, 3, -4, 0]);
