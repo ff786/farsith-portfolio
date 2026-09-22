@@ -2,8 +2,17 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
-import { motion, useMotionValue, useSpring } from 'framer-motion';
+import { motion, useMotionValue, useSpring, useScroll, useTransform } from 'framer-motion';
 import { site, stack, projects } from '../data/site';
+
+function WorkspaceDepth(){
+  return <div className="workspace-depth" aria-hidden="true">
+    <div className="depth-ring ring-one"/><div className="depth-ring ring-two"/>
+    <div className="depth-panel panel-left"><span>01</span><b>BUILD</b><small>ship with intent</small></div>
+    <div className="depth-panel panel-right"><span>02</span><b>IMPROVE</b><small>iterate with purpose</small></div>
+    <div className="depth-particle particle-one"/><div className="depth-particle particle-two"/><div className="depth-particle particle-three"/>
+  </div>
+}
 
 function GlowScene(){
   const x=useMotionValue(0), y=useMotionValue(0);
@@ -11,7 +20,7 @@ function GlowScene(){
   const zero=useMotionValue(0);
   const sz=useSpring(zero,{stiffness:90,damping:20});
   return <div className="scene" onMouseMove={e=>{const r=e.currentTarget.getBoundingClientRect();x.set((e.clientX-r.left-r.width/2)/20);y.set((e.clientY-r.top-r.height/2)/20)}} onMouseLeave={()=>{x.set(0);y.set(0)}}>
-    <div className="scene-grid"/>
+    <div className="scene-grid"/><WorkspaceDepth/>
     <motion.div className="orb orb-a" style={{x:sx,y:sy}}/>
     <motion.div className="avatar-shell" style={{x:sx, y:sy}}>
       <div className="avatar-glow"/>
@@ -42,7 +51,7 @@ export default function Home(){
     <div ref={cursor} className="cursor"/>
     <Nav/>
     <main>
-      <section id="home" className="hero"><div className="hero-copy"><div className="eyebrow">COLOMBO · SRI LANKA / SOFTWARE DEVELOPER</div><h1>FARSITH<br/><em>FAWZER</em></h1><p>Building ideas into <strong>real-world software.</strong></p><div className="hero-actions"><a className="btn primary" href="#projects">Explore My Work <span>↘</span></a><a className="btn ghost" href={`mailto:${site.email}`}>Let’s Connect <span>↗</span></a></div><div className="hero-meta"><span>FULL-STACK</span><span>WEB APPLICATIONS</span><span>SOFTWARE ENGINEERING</span></div></div><GlowScene/><div className="scroll-cue"><span>SCROLL TO EXPLORE</span><i/></div></section>
+      <motion.section id="home" className="hero" style={{scale:heroScale, opacity:heroOpacity, y:heroY}}><div className="hero-copy"><div className="eyebrow">COLOMBO · SRI LANKA / SOFTWARE DEVELOPER</div><h1>FARSITH<br/><em>FAWZER</em></h1><p>Building ideas into <strong>real-world software.</strong></p><div className="hero-actions"><a className="btn primary" href="#projects">Explore My Work <span>↘</span></a><a className="btn ghost" href={`mailto:${site.email}`}>Let’s Connect <span>↗</span></a></div><div className="hero-meta"><span>FULL-STACK</span><span>WEB APPLICATIONS</span><span>SOFTWARE ENGINEERING</span></div></div><GlowScene/><div className="scroll-cue"><span>SCROLL TO EXPLORE</span><i/></div></section>
 
       <section id="about" className="section about"><div className="section-kicker">01 / MEET FARSITH</div><div className="about-grid"><div><h2>BUILDING SOFTWARE<br/><span>WITH PURPOSE.</span></h2><p className="lead">Software Developer with hands-on experience building modern web applications across e-commerce, point-of-sale, digital platforms, healthcare, and accessibility-focused systems.</p><p>Experienced across frontend development, backend integration, databases, authentication and machine-learning-powered applications. The focus is practical: understand the problem, build the system, and make the experience feel considered.</p><div className="signature">BUILD · SOLVE · IMPROVE · REPEAT.</div></div><div className="about-stage"><Image src="/avatar/confident.png" alt="Farsith avatar, confident expression" fill sizes="40vw"/><div className="stage-label">FARSITH / 01</div></div></div><div className="stat-row"><div><span>FOCUS</span><b>Full-Stack<br/>Development</b></div><div><span>SPECIALIZATION</span><b>Web<br/>Applications</b></div><div><span>CURRENTLY</span><b>Software<br/>Engineering</b></div><div><span>EDUCATION</span><b>B.Sc. (Hons)<br/>IT — SE</b></div></div></section>
 
