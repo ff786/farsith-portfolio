@@ -175,7 +175,7 @@ export function PortfolioPage() {
 
     <main ref={journeyRef} className="portfolio-journey">
       <div className="journey-sticky">
-        <AvatarStage progress={journeyProgress} activeStage={activeStage} />
+        <AvatarStage progress={journeyProgress} activeStage={activeStage} selectedProjectId={selectedProjectId} />
         <JourneyProgress activeStage={activeStage} />
       </div>
 
