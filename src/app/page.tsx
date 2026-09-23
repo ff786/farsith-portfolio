@@ -65,14 +65,28 @@ function WorkspaceDecor({ progress }: { progress: MotionValue<number> }) {
   );
 }
 
+function AvatarFrame({ stage, index, progress }: { stage: typeof journeyStages[number]; index: number; progress: MotionValue<number> }) {
+  const position = index * 0.2;
+  const fadeStart = index === 0 ? 0 : position - 0.12;
+  const fadePeak = position;
+  const fadeEnd = index === journeyStages.length - 1 ? 1 : position + 0.12;
+  const opacity = useTransform(progress, [fadeStart, fadePeak, fadeEnd], index === 0 ? [1, 1, 0] : index === journeyStages.length - 1 ? [0, 1, 1] : [0, 1, 0]);
+  const scale = useTransform(progress, [fadeStart, fadePeak, fadeEnd], [0.975, 1, 0.975]);
+  const blur = useTransform(progress, [fadeStart, fadePeak, fadeEnd], ['3px', '0px', '3px']);
+
+  return (
+    <motion.div className={`journey-avatar avatar-${index}`} style={{ opacity, scale, filter: blur }} aria-hidden>
+      <Image src={stage.image} alt={stage.alt} fill sizes="(max-width: 900px) 80vw, 42vw" priority={index < 2} />
+    </motion.div>
+  );
+}
+
 function AvatarStage({ progress, activeStage }: { progress: MotionValue<number>; activeStage: number }) {
   const avatarY = useTransform(progress, [0, 1], ['1%', '-3%']);
   const avatarScale = useTransform(progress, [0, 0.18, 0.42, 0.7, 1], [1, 1.035, 0.97, 1.055, 1]);
   const avatarRotate = useTransform(progress, [0, 0.2, 0.4, 0.62, 0.82, 1], [0, -1.5, 2.5, -3, 2, 0]);
   const cameraX = useTransform(progress, [0, 0.3, 0.62, 1], ['0%', '2%', '-2%', '6%']);
   const cameraZ = useTransform(progress, [0, 0.5, 1], [0, 28, 0]);
-
-  const stagePositions = [0, 0.2, 0.4, 0.6, 0.8, 1];
 
   return (
     <div className={`avatar-stage stage-${activeStage}`}>
@@ -81,26 +95,9 @@ function AvatarStage({ progress, activeStage }: { progress: MotionValue<number>;
         <div className="avatar-halo" />
         <div className="avatar-floor" />
         <div className="avatar-image-stack">
-          {journeyStages.map((stage, index) => {
-            const position = stagePositions[index];
-            const fadeStart = index === 0 ? 0 : position - 0.12;
-            const fadePeak = position;
-            const fadeEnd = index === journeyStages.length - 1 ? 1 : position + 0.12;
-            const opacity = useTransform(progress, [fadeStart, fadePeak, fadeEnd], index === 0 ? [1, 1, 0] : index === journeyStages.length - 1 ? [0, 1, 1] : [0, 1, 0]);
-            const scale = useTransform(progress, [fadeStart, fadePeak, fadeEnd], [0.975, 1, 0.975]);
-            const blur = useTransform(progress, [fadeStart, fadePeak, fadeEnd], ['3px', '0px', '3px']);
-
-            return (
-              <motion.div
-                key={stage.id}
-                className={`journey-avatar avatar-${index}`}
-                style={{ opacity, scale, filter: blur }}
-                aria-hidden={activeStage !== index}
-              >
-                <Image src={stage.image} alt={stage.alt} fill sizes="(max-width: 900px) 80vw, 42vw" priority={index < 2} />
-              </motion.div>
-            );
-          })}
+          {journeyStages.map((stage, index) => (
+            <AvatarFrame key={stage.id} stage={stage} index={index} progress={progress} />
+          ))}
         </div>
       </motion.div>
       <div className="stage-surface" />
@@ -112,7 +109,6 @@ function AvatarStage({ progress, activeStage }: { progress: MotionValue<number>;
     </div>
   );
 }
-
 function JourneyProgress({ activeStage }: { activeStage: number }) {
   return (
     <aside className="journey-progress" aria-label="Portfolio sections">
