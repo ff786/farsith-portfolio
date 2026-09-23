@@ -37,6 +37,15 @@ const RING_OF_INDEX = [0, 2, 1, 2, 1];
 /** Evenly spaced phases; build 01 starts at the front (bottom-centre) of the system. */
 const phaseOf = (index: number) => 90 + index * (360 / projects.length);
 
+/**
+ * Round to a fixed precision. Server (Node) and browser Math.sin/cos can differ in the
+ * last few decimal places, which makes SSR'd SVG attributes mismatch on hydration.
+ */
+const round = (n: number, places = 2) => {
+  const f = 10 ** places;
+  return Math.round(n * f) / f;
+};
+
 function geometry(w: number, h: number): Geometry {
   const compact = w < COMPACT_BREAKPOINT;
   const fractions = compact ? RING_FRACTIONS.compact : RING_FRACTIONS.wide;
@@ -44,7 +53,7 @@ function geometry(w: number, h: number): Geometry {
   return {
     cx: w / 2,
     cy: h * 0.5,
-    radii: fractions.map((f) => ({ rx: w * f, ry: w * f * tilt })),
+    radii: fractions.map((f) => ({ rx: round(w * f), ry: round(w * f * tilt) })),
   };
 }
 
@@ -53,7 +62,7 @@ function pointOnRing(g: Geometry, ring: number, degrees: number) {
   const { rx, ry } = g.radii[ring];
   const sin = Math.sin(t);
   // depth: 0 = far side (behind the core), 1 = near side (in front of the core)
-  return { x: g.cx + rx * Math.cos(t), y: g.cy + ry * sin, depth: (sin + 1) / 2 };
+  return { x: round(g.cx + rx * Math.cos(t)), y: round(g.cy + ry * sin), depth: round((sin + 1) / 2, 3) };
 }
 
 /** Half-ellipse paths so the far half renders behind the core and the near half in front. */
@@ -93,7 +102,7 @@ function RingLayer({ g, half, activeRing }: { g: Geometry; half: 'back' | 'front
         <stop offset="1" stopColor="currentColor" stopOpacity="0.15" />
       </linearGradient>
     </defs>
-    {half === 'back' ? <line className="project-orbit__horizon" x1={g.cx - g.radii[2].rx * 1.08} x2={g.cx + g.radii[2].rx * 1.08} y1={g.cy} y2={g.cy} /> : null}
+    {half === 'back' ? <line className="project-orbit__horizon" x1={round(g.cx - g.radii[2].rx * 1.08)} x2={round(g.cx + g.radii[2].rx * 1.08)} y1={g.cy} y2={g.cy} /> : null}
     {RING_KEYS.map((key, ring) => <path
       key={key}
       d={arcPath(g, ring, half)}
@@ -106,7 +115,7 @@ function RingLayer({ g, half, activeRing }: { g: Geometry; half: 'back' | 'front
       const inFront = Math.sin((deg * Math.PI) / 180) >= 0;
       if (inFront !== (half === 'front')) return null;
       const p = pointOnRing(g, 2, deg);
-      return <circle key={deg} cx={p.x} cy={p.y} r={i % 3 === 0 ? 1.4 : 0.8} className="project-orbit__tick" style={{ opacity: 0.25 + p.depth * 0.6 }} />;
+      return <circle key={deg} cx={p.x} cy={p.y} r={i % 3 === 0 ? 1.4 : 0.8} className="project-orbit__tick" style={{ opacity: round(0.25 + p.depth * 0.6, 3) }} />;
     })}
   </svg>;
 }
@@ -115,7 +124,7 @@ function Comet({ angle, width, height }: { angle: MotionValue<number>; width: Mo
   const point = (a: number, w: number, h: number) => pointOnRing(geometry(w, h), 2, a * 2.4 + 200);
   const cx = useTransform([angle, width, height], ([a, w, h]: number[]) => point(a, w, h).x);
   const cy = useTransform([angle, width, height], ([a, w, h]: number[]) => point(a, w, h).y);
-  const opacity = useTransform([angle, width, height], ([a, w, h]: number[]) => Math.pow(point(a, w, h).depth, 2.2));
+  const opacity = useTransform([angle, width, height], ([a, w, h]: number[]) => round(Math.pow(point(a, w, h).depth, 2.2), 3));
   return <svg className="project-orbit__plane project-orbit__plane--comet" aria-hidden>
     <motion.circle r={2.2} className="project-orbit__comet" style={{ cx, cy, opacity }} />
   </svg>;
@@ -140,8 +149,8 @@ function ProjectOrbitNode({ project, index, angle, width, height, hovered, dimme
   const y = useTransform([angle, width, height], (v: number[]) => locate(v).y);
   const depth = useTransform([angle, width, height], (v: number[]) => locate(v).depth);
   // Perspective: far builds shrink and recede, near builds grow and sit in front of the core.
-  const scale = useTransform(depth, (d) => 0.74 + d * 0.34);
-  const opacity = useTransform(depth, (d) => 0.42 + d * 0.58);
+  const scale = useTransform(depth, (d) => round(0.74 + d * 0.34, 3));
+  const opacity = useTransform(depth, (d) => round(0.42 + d * 0.58, 3));
   const zIndex = useTransform(depth, (d) => (d >= 0.5 ? 12 + Math.round(d * 10) : 2 + Math.round(d * 4)));
 
   const focus = () => { onHover(project.id); onSelect(project); };
