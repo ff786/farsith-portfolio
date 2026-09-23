@@ -15,8 +15,7 @@
     "next": "^15.5.3",
     "react": "19.2.0",
     "react-dom": "19.2.0",
-    "three": "^0.179.1",
-    "@designcodeio/threeui": "^1.2.0"
+    "three": "^0.179.1"
   },
   "devDependencies": {
     "@types/node": "^22.18.0",
