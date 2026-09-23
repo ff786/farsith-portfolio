@@ -605,6 +605,9 @@
   width:calc(100% + 50px);
   margin-left:-25px;
 }
+.toolkit-spiral-stage--left{
+  transform:translateX(-54px);
+}
 .infinite-tech-spiral{
   position:relative;
   width:100%;
@@ -738,6 +741,9 @@
   .toolkit-spiral-stage{
     width:100%;
     margin-left:0;
+  }
+  .toolkit-spiral-stage--left{
+    transform:none;
   }
   .infinite-tech-spiral{
     height:500px;
