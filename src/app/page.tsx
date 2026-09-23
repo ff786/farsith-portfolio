@@ -81,16 +81,50 @@ function AvatarFrame({ stage, index, progress }: { stage: typeof journeyStages[n
   );
 }
 
+function ProjectEnvironment({ progress, activeStage }: { progress: MotionValue<number>; activeStage: number }) {
+  const opacity = useTransform(progress, [0.28, 0.36, 0.46, 0.54], [0, 1, 1, 0]);
+  const y = useTransform(progress, [0.28, 0.46, 0.54], [28, 0, -18]);
+  const rotate = useTransform(progress, [0.28, 0.46, 0.54], [-2, 0, 2]);
+
+  return (
+    <motion.div className="project-environment" style={{ opacity, y, rotateZ: rotate }} aria-hidden={activeStage !== 2}>
+      <div className="workbench-label"><span>03 / WORKBENCH</span><b>BUILD IN PROGRESS</b></div>
+      <div className="workbench-window">
+        <div className="workbench-top"><i /><i /><i /><span>farsith / project workspace</span></div>
+        <div className="workbench-body">
+          <div className="workbench-side">
+            <b>PROJECTS</b>
+            {projects.map((project, index) => <span key={project.id} className={index === 0 ? 'selected' : ''}>{project.id} · {project.title}</span>)}
+          </div>
+          <div className="workbench-main">
+            <div className="workbench-heading"><span>MYNIX POS</span><b>inventory / sales</b></div>
+            <div className="workbench-stats"><i /><i /><i /></div>
+            <div className="workbench-chart"><i /><i /><i /><i /><i /><i /></div>
+            <div className="workbench-code"><span>const workflow = build();</span><span>await system.validate();</span></div>
+          </div>
+        </div>
+      </div>
+      <div className="workbench-glow" />
+    </motion.div>
+  );
+}
+
 function AvatarStage({ progress, activeStage }: { progress: MotionValue<number>; activeStage: number }) {
   const avatarY = useTransform(progress, [0, 1], ['1%', '-3%']);
   const avatarScale = useTransform(progress, [0, 0.18, 0.42, 0.7, 1], [1, 1.035, 0.97, 1.055, 1]);
   const avatarRotate = useTransform(progress, [0, 0.2, 0.4, 0.62, 0.82, 1], [0, -1.5, 2.5, -3, 2, 0]);
-  const cameraX = useTransform(progress, [0, 0.3, 0.62, 1], ['0%', '2%', '-2%', '6%']);
-  const cameraZ = useTransform(progress, [0, 0.5, 1], [0, 28, 0]);
+  // Deliberate left → right → left → right staging across the six chapters.
+  const cameraX = useTransform(
+    progress,
+    [0, 0.2, 0.4, 0.6, 0.8, 1],
+    ['-12%', '12%', '-11%', '13%', '-10%', '14%']
+  );
+  const cameraZ = useTransform(progress, [0, 0.2, 0.4, 0.6, 0.8, 1], [0, 18, 28, 18, 28, 0]);
 
   return (
     <div className={`avatar-stage stage-${activeStage}`}>
       <WorkspaceDecor progress={progress} />
+      <ProjectEnvironment progress={progress} activeStage={activeStage} />
       <motion.div className="avatar-camera" style={{ x: cameraX, y: avatarY, scale: avatarScale, rotateY: avatarRotate, z: cameraZ }}>
         <div className="avatar-halo" />
         <div className="avatar-floor" />
