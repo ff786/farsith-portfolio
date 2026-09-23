@@ -147,3 +147,27 @@
   .journey-avatar{transition:none!important}
   .journey-grid,.journey-light{transform:none!important}
 }
+
+
+/* Stage-specific art direction: the same world subtly changes language as the story moves. */
+.avatar-stage.stage-0 .journey-light{background:radial-gradient(circle,rgba(101,185,255,.24),transparent 66%)}
+.avatar-stage.stage-1 .journey-light{background:radial-gradient(circle,rgba(238,229,209,.14),transparent 66%)}
+.avatar-stage.stage-2 .journey-light{background:radial-gradient(circle,rgba(73,177,255,.25),transparent 66%)}
+.avatar-stage.stage-3 .journey-light{background:radial-gradient(circle,rgba(144,113,255,.2),transparent 66%)}
+.avatar-stage.stage-4 .journey-light{background:radial-gradient(circle,rgba(255,190,100,.15),transparent 66%)}
+.avatar-stage.stage-5 .journey-light{background:radial-gradient(circle,rgba(245,247,250,.12),transparent 66%)}
+.avatar-stage.stage-1 .journey-window{background:linear-gradient(145deg,rgba(92,101,111,.16),rgba(4,7,11,.08))}
+.avatar-stage.stage-2 .journey-window{background:linear-gradient(145deg,rgba(28,72,108,.2),rgba(4,7,11,.08))}
+.avatar-stage.stage-3 .journey-window{background:linear-gradient(145deg,rgba(62,42,108,.18),rgba(4,7,11,.08))}
+.avatar-stage.stage-4 .journey-window{background:linear-gradient(145deg,rgba(105,71,35,.16),rgba(4,7,11,.08))}
+.avatar-stage.stage-5 .journey-window{background:linear-gradient(145deg,rgba(75,82,91,.14),rgba(4,7,11,.08))}
+.avatar-stage.stage-2 .journey-monitor{transform:translateY(-4px) scale(1.03)}
+.avatar-stage.stage-3 .journey-orb{box-shadow:0 0 50px rgba(144,113,255,.18)}
+.avatar-stage.stage-4 .journey-orb{box-shadow:0 0 50px rgba(255,190,100,.14)}
+.avatar-stage.stage-5 .journey-grid{opacity:.3}
+.avatar-stage.stage-5 .stage-surface{border-color:rgba(255,255,255,.2)}
+.avatar-stage .journey-monitor,.avatar-stage .journey-orb,.avatar-stage .journey-window,.avatar-stage .journey-grid{transition:background .7s ease,opacity .7s ease,box-shadow .7s ease,transform .7s ease}
+.avatar-stage.stage-0 .journey-particle{animation:journeyFloat 4.8s ease-in-out infinite}
+.avatar-stage.stage-2 .journey-particle{animation:journeyFloat 3.8s ease-in-out infinite}
+.avatar-stage.stage-3 .journey-particle{animation:journeyFloat 3.2s ease-in-out infinite}
+@keyframes journeyFloat{0%,100%{translate:0 0;opacity:.45}50%{translate:0 -10px;opacity:1}}
