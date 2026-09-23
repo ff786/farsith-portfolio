@@ -83,7 +83,7 @@ function ProjectOrbit({ selectedId, onSelect }: { selectedId: string; onSelect: 
     />)}
 
     <AnimatePresence mode="wait">
-      <motion.div
+      {hoveredId ? <motion.div
         key={focused.id}
         className={`project-orbit-detail project-orbit-detail--${focused.tone}`}
         initial={reducedMotion ? false : { opacity: 0, y: 12, scale: .97 }}
@@ -93,7 +93,7 @@ function ProjectOrbit({ selectedId, onSelect }: { selectedId: string; onSelect: 
       >
         <div className="project-orbit-detail__header">
           <span>{focused.id} / PROJECT</span>
-          <b>{focused.tone.toUpperCase()}</b>
+          <b>HOVER STATE</b>
         </div>
         <div className="project-orbit-detail__body">
           <div className="project-orbit-detail__visual"><ProjectPreview project={focused} /></div>
@@ -104,7 +104,7 @@ function ProjectOrbit({ selectedId, onSelect }: { selectedId: string; onSelect: 
             <span>{focused.contribution}</span>
           </div>
         </div>
-      </motion.div>
+      </motion.div> : null}
     </AnimatePresence>
   </div>;
 }
