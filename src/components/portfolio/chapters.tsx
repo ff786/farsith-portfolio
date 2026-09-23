@@ -1,13 +1,15 @@
-import { motion, useTransform, type MotionValue } from 'framer-motion';
+import { motion, useReducedMotion, useTransform, type MotionValue } from 'framer-motion';
+import type { ReactNode } from 'react';
 import { site, stack, projects } from '../../data/site';
 
 type ChapterProps = { progress: MotionValue<number> };
 
-function ChapterReveal({ progress, center, children }: { progress: MotionValue<number>; center: number; children: React.ReactNode }) {
+function ChapterReveal({ progress, center, children }: { progress: MotionValue<number>; center: number; children: ReactNode }) {
+  const reducedMotion = useReducedMotion();
   const opacity = useTransform(progress, [Math.max(0, center - 0.095), center - 0.035, center + 0.07], [0, 1, 0.86]);
   const y = useTransform(progress, [Math.max(0, center - 0.095), center - 0.035, center + 0.07], [34, 0, -12]);
   const blur = useTransform(progress, [Math.max(0, center - 0.095), center - 0.035, center + 0.07], ['7px', '0px', '1px']);
-  return <motion.div className="chapter-reveal" style={{ opacity, y, filter: blur }}>{children}</motion.div>;
+  return <motion.div className="chapter-reveal" style={reducedMotion ? undefined : { opacity, y, filter: blur }}>{children}</motion.div>;
 }
 
 export function HeroChapter({ progress }: ChapterProps) {
