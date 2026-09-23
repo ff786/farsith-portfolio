@@ -363,3 +363,45 @@
 @media(prefers-reduced-motion:reduce){
   .chapter-reveal{transform:none!important;filter:none!important;opacity:1!important}
 }
+
+
+/* -------------------------------------------------------------------------- */
+/* Chapter stop interaction                                                    */
+/* Desktop: wheel gestures are stepped by PortfolioPage.                       */
+/* Mobile: native touch remains fluid, with cinematic snap points.             */
+/* -------------------------------------------------------------------------- */
+@media (max-width: 980px) {
+  html {
+    scroll-snap-type: y proximity;
+  }
+
+  .portfolio-journey {
+    scroll-snap-type: y proximity;
+  }
+
+  .journey-chapter {
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+}
+
+@media (min-width: 981px) {
+  html {
+    scroll-snap-type: none;
+  }
+
+  .journey-chapter {
+    scroll-snap-align: none;
+    scroll-snap-stop: normal;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .journey-chapter {
+    scroll-snap-stop: normal;
+  }
+}
