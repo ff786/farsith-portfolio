@@ -1,14 +1,40 @@
-import { AnimatePresence, motion, useReducedMotion, useTransform, type MotionValue } from 'framer-motion';
-import { useState, type ReactNode } from 'react';
+import { AnimatePresence, motion, useMotionValue, useReducedMotion, useTransform, type MotionValue } from 'framer-motion';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { site, stack, projects } from '../../data/site';
 import { InfiniteTechSpiral } from './infinite-tech-spiral';
 
 type ChapterProps = { progress: MotionValue<number> };
-
 const PROJECT_CAROUSEL_GAP = 16;
 const PROJECT_CAROUSEL_SPRING = { type: 'spring' as const, stiffness: 300, damping: 30 };
 
 type ProjectCarouselItem = { title: string; description: string; id: string; icon: ReactNode };
+
+function ProjectCarouselCard({ item, index, x, offset, itemWidth, transition }: {
+  item: ProjectCarouselItem;
+  index: number;
+  x: MotionValue<number>;
+  offset: number;
+  itemWidth: number;
+  transition: typeof PROJECT_CAROUSEL_SPRING;
+}) {
+  const range = [-(index + 1) * offset, -index * offset, -(index - 1) * offset];
+  const rotateY = useTransform(x, range, [90, 0, -90], { clamp: false });
+
+  return <motion.div
+    className="project-carousel__item"
+    style={{ width: itemWidth, rotateY }}
+    transition={transition}
+  >
+    <div className="project-carousel__item-header">
+      <span className="project-carousel__icon">{item.icon}</span>
+      <span className="project-carousel__item-id">{item.id}</span>
+    </div>
+    <div className="project-carousel__item-content">
+      <div className="project-carousel__item-title">{item.title}</div>
+      <p className="project-carousel__item-description">{item.description}</p>
+    </div>
+  </motion.div>;
+}
 
 function ProjectCarousel({ items, selectedId, onSelect, baseWidth = 380, loop = true }: {
   items: ProjectCarouselItem[];
@@ -71,20 +97,24 @@ function ProjectCarousel({ items, selectedId, onSelect, baseWidth = 380, loop = 
         if (direction) selectPosition(position + direction);
       }}
     >
-      {rendered.map((item, index) => {
-        const range = [-(index + 1) * offset, -index * offset, -(index - 1) * offset];
-        const rotateY = useTransform(x, range, [90, 0, -90], { clamp: false });
-        return <motion.div key={item.id + '-' + index} className="project-carousel__item" style={{ width: itemWidth, rotateY }} transition={transition}>
-          <div className="project-carousel__item-header"><span className="project-carousel__icon">{item.icon}</span><span className="project-carousel__item-id">{item.id}</span></div>
-          <div className="project-carousel__item-content"><div className="project-carousel__item-title">{item.title}</div><p className="project-carousel__item-description">{item.description}</p></div>
-        </motion.div>;
-      })}
+      {rendered.map((item, index) => (
+        <ProjectCarouselCard
+          key={item.id + '-' + index}
+          item={item}
+          index={index}
+          x={x}
+          offset={offset}
+          itemWidth={itemWidth}
+          transition={transition}
+        />
+      ))}
     </motion.div>
     <div className="project-carousel__indicators">
       {items.map((item, index) => <motion.button key={item.id} type="button" className={activeIndex === index ? 'active' : ''} aria-label={'Select ' + item.title} aria-current={activeIndex === index} animate={{ scale: activeIndex === index ? 1.2 : 1 }} onClick={() => { onSelect(item.id); selectPosition(loop ? index + 1 : index); }} transition={{ duration: .15 }} />)}
     </div>
   </div>;
 }
+
 
 
 type Project = (typeof projects)[number];
@@ -175,4 +205,38 @@ function ProjectDeck({ selectedId, onSelect }: { selectedId: string; onSelect: (
       <div className="project-signal" aria-hidden><span /><span /><span /></div>
     </div>
   </div>;
+}
+
+export function ProjectsChapter({ progress, selectedProjectId, onSelectProject }: ChapterProps & { selectedProjectId: string; onSelectProject: (project: Project) => void }) {
+  return <section id="projects" className="journey-chapter projects-chapter">
+    <ChapterReveal progress={progress} center={0.395}>
+      <div className="chapter-copy"><div className="section-kicker">03 / SELECTED WORK</div><h2>WHAT I <em>BUILD.</em></h2><p>Select a build. The workstation transforms with the project — interface, system signals, light and working state all change together.</p></div>
+      <ProjectDeck selectedId={selectedProjectId} onSelect={onSelectProject} />
+    </ChapterReveal>
+  </section>;
+}
+
+export function ToolkitChapter({ progress }: ChapterProps) {
+  return <section id="toolkit" className="journey-chapter toolkit-chapter">
+    <ChapterReveal progress={progress} center={0.565}>
+      <div className="toolkit-layout">
+        <div className="chapter-copy">
+          <div className="section-kicker">04 / MY TOOLKIT</div>
+          <h2>THE TOOLS<br /><span>BEHIND THE WORK.</span></h2>
+          <p>A practical stack spanning interface design, application logic, data, infrastructure and applied machine learning.</p>
+        </div>
+        <div className="toolkit-spiral-stage toolkit-spiral-stage--left">
+          <InfiniteTechSpiral items={stack} progress={progress} />
+        </div>
+      </div>
+    </ChapterReveal>
+  </section>;
+}
+
+export function ExperienceChapter({ progress }: ChapterProps) {
+  return <section id="experience" className="journey-chapter experience-chapter"><ChapterReveal progress={progress} center={0.735}><div className="chapter-copy"><div className="section-kicker">05 / EXPERIENCE & JOURNEY</div><h2>FROM <em>SUPPORT</em><br />TO SOFTWARE.</h2><p>Professional experience shaped by structured troubleshooting, customer-facing problem solving, cross-functional collaboration and software engineering.</p></div><div className="experience-path"><div className="experience-node"><span>2020 — 2024</span><div><b>Dialog Axiata PLC</b><small>Customer Service Associate → Senior Customer Service Associate</small></div></div><div className="experience-node"><span>2024 — PRESENT</span><div><b>Sysco Labs Technologies</b><small>Analyst — L1 Operations Support</small></div></div><div className="experience-node"><span>NOW</span><div><b>Software Engineering</b><small>B.Sc. (Hons) IT — Software Engineering · SLIIT</small></div></div></div></ChapterReveal></section>;
+}
+
+export function ContactChapter({ progress }: ChapterProps) {
+  return <section id="contact" className="journey-chapter contact-chapter"><ChapterReveal progress={progress} center={0.92}><div className="chapter-copy"><div className="section-kicker">06 / LET’S BUILD SOMETHING</div><h2>HAVE AN IDEA,<br /><em>A PRODUCT, OR A PROBLEM<br />WORTH SOLVING?</em></h2><a className="contact-mail" href={`mailto:${site.email}`}>{site.email} <span>↗</span></a><div className="contact-links"><a href={site.linkedin} target="_blank" rel="noreferrer">LinkedIn ↗</a><a href={site.github} target="_blank" rel="noreferrer">GitHub ↗</a><a href={`mailto:${site.email}`}>Email ↗</a></div></div><div className="chapter-note contact-note"><span>THE JOURNEY ENDS HERE.</span><p>The next move is yours. Let’s build something meaningful.</p></div></ChapterReveal></section>;
 }
