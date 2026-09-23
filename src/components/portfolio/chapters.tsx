@@ -2,6 +2,7 @@ import { AnimatePresence, motion, useReducedMotion, useTransform, type MotionVal
 import { useState, type ReactNode } from 'react';
 import { site, stack, projects } from '../../data/site';
 import { InfiniteTechSpiral } from './infinite-tech-spiral';
+import { ProjectCarousel } from './project-carousel';
 
 type ChapterProps = { progress: MotionValue<number> };
 type Project = (typeof projects)[number];
@@ -56,15 +57,27 @@ export function AboutChapter({ progress }: ChapterProps) {
 function ProjectDeck({ selectedId, onSelect }: { selectedId: string; onSelect: (project: Project) => void }) {
   const selected = projects.find((project) => project.id === selectedId) ?? projects[0];
   const reducedMotion = useReducedMotion();
+  const carouselItems = projects.map((project) => ({
+    id: project.id,
+    title: project.title,
+    description: project.subtitle,
+    icon: project.id,
+  }));
 
   return <div className="project-system">
-    <div className="project-index" role="tablist" aria-label="Select a project">
-      {projects.map((project, index) => (
-        <button key={project.id} type="button" role="tab" aria-selected={project.id === selected.id} className={project.id === selected.id ? 'active' : ''} onClick={() => onSelect(project)}>
-          <span>{project.id}</span><b>{project.title}</b><i />
-        </button>
-      ))}
-    </div>
+    <ProjectCarousel
+      items={carouselItems}
+      selectedId={selected.id}
+      onSelect={(id) => {
+        const project = projects.find((item) => item.id === id);
+        if (project) onSelect(project);
+      }}
+      baseWidth={380}
+      autoplay={false}
+      pauseOnHover
+      loop
+    />
+
     <div className={`project-feature project-feature-${selected.tone}`}>
       <AnimatePresence mode="wait" initial={false}>
         <motion.article key={selected.id} className="project-feature-card" initial={reducedMotion ? false : { opacity: 0, x: 24, scale: 0.985 }} animate={{ opacity: 1, x: 0, scale: 1 }} exit={reducedMotion ? undefined : { opacity: 0, x: -18, scale: 0.985 }} transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}>
@@ -80,38 +93,4 @@ function ProjectDeck({ selectedId, onSelect }: { selectedId: string; onSelect: (
       <div className="project-signal" aria-hidden><span /><span /><span /></div>
     </div>
   </div>;
-}
-
-export function ProjectsChapter({ progress, selectedProjectId, onSelectProject }: ChapterProps & { selectedProjectId: string; onSelectProject: (project: Project) => void }) {
-  return <section id="projects" className="journey-chapter projects-chapter">
-    <ChapterReveal progress={progress} center={0.395}>
-      <div className="chapter-copy"><div className="section-kicker">03 / SELECTED WORK</div><h2>WHAT I <em>BUILD.</em></h2><p>Select a build. The workstation transforms with the project — interface, system signals, light and working state all change together.</p></div>
-      <ProjectDeck selectedId={selectedProjectId} onSelect={onSelectProject} />
-    </ChapterReveal>
-  </section>;
-}
-
-export function ToolkitChapter({ progress }: ChapterProps) {
-  return <section id="toolkit" className="journey-chapter toolkit-chapter">
-    <ChapterReveal progress={progress} center={0.565}>
-      <div className="toolkit-layout">
-        <div className="chapter-copy">
-          <div className="section-kicker">04 / MY TOOLKIT</div>
-          <h2>THE TOOLS<br /><span>BEHIND THE WORK.</span></h2>
-          <p>A practical stack spanning interface design, application logic, data, infrastructure and applied machine learning.</p>
-        </div>
-        <div className="toolkit-spiral-stage toolkit-spiral-stage--left">
-          <InfiniteTechSpiral items={stack} progress={progress} />
-        </div>
-      </div>
-    </ChapterReveal>
-  </section>;
-}
-
-export function ExperienceChapter({ progress }: ChapterProps) {
-  return <section id="experience" className="journey-chapter experience-chapter"><ChapterReveal progress={progress} center={0.735}><div className="chapter-copy"><div className="section-kicker">05 / EXPERIENCE & JOURNEY</div><h2>FROM <em>SUPPORT</em><br />TO SOFTWARE.</h2><p>Professional experience shaped by structured troubleshooting, customer-facing problem solving, cross-functional collaboration and software engineering.</p></div><div className="experience-path"><div className="experience-node"><span>2020 — 2024</span><div><b>Dialog Axiata PLC</b><small>Customer Service Associate → Senior Customer Service Associate</small></div></div><div className="experience-node"><span>2024 — PRESENT</span><div><b>Sysco Labs Technologies</b><small>Analyst — L1 Operations Support</small></div></div><div className="experience-node"><span>NOW</span><div><b>Software Engineering</b><small>B.Sc. (Hons) IT — Software Engineering · SLIIT</small></div></div></div></ChapterReveal></section>;
-}
-
-export function ContactChapter({ progress }: ChapterProps) {
-  return <section id="contact" className="journey-chapter contact-chapter"><ChapterReveal progress={progress} center={0.92}><div className="chapter-copy"><div className="section-kicker">06 / LET’S BUILD SOMETHING</div><h2>HAVE AN IDEA,<br /><em>A PRODUCT, OR A PROBLEM<br />WORTH SOLVING?</em></h2><a className="contact-mail" href={`mailto:${site.email}`}>{site.email} <span>↗</span></a><div className="contact-links"><a href={site.linkedin} target="_blank" rel="noreferrer">LinkedIn ↗</a><a href={site.github} target="_blank" rel="noreferrer">GitHub ↗</a><a href={`mailto:${site.email}`}>Email ↗</a></div></div><div className="chapter-note contact-note"><span>THE JOURNEY ENDS HERE.</span><p>The next move is yours. Let’s build something meaningful.</p></div></ChapterReveal></section>;
 }
