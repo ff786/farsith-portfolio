@@ -1,123 +1,112 @@
-import { AnimatePresence, motion, useMotionValue, useReducedMotion, useTransform, type MotionValue } from 'framer-motion';
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { AnimatePresence, motion, useReducedMotion, useTransform, type MotionValue } from 'framer-motion';
+import { useState, type ReactNode } from 'react';
 import { site, stack, projects } from '../../data/site';
 import { InfiniteTechSpiral } from './infinite-tech-spiral';
 
 type ChapterProps = { progress: MotionValue<number> };
-const PROJECT_CAROUSEL_GAP = 16;
-const PROJECT_CAROUSEL_SPRING = { type: 'spring' as const, stiffness: 300, damping: 30 };
+type Project = (typeof projects)[number];
 
-type ProjectCarouselItem = { title: string; description: string; id: string; icon: ReactNode };
-
-function ProjectCarouselCard({ item, index, x, offset, itemWidth, transition }: {
-  item: ProjectCarouselItem;
-  index: number;
-  x: MotionValue<number>;
-  offset: number;
-  itemWidth: number;
-  transition: typeof PROJECT_CAROUSEL_SPRING;
-}) {
-  const range = [-(index + 1) * offset, -index * offset, -(index - 1) * offset];
-  const rotateY = useTransform(x, range, [90, 0, -90], { clamp: false });
-
-  return <motion.div
-    className="project-carousel__item"
-    style={{ width: itemWidth, rotateY }}
-    transition={transition}
-  >
-    <div className="project-carousel__item-header">
-      <span className="project-carousel__icon">{item.icon}</span>
-      <span className="project-carousel__item-id">{item.id}</span>
-    </div>
-    <div className="project-carousel__item-content">
-      <div className="project-carousel__item-title">{item.title}</div>
-      <p className="project-carousel__item-description">{item.description}</p>
-    </div>
-  </motion.div>;
-}
-
-function ProjectCarousel({ items, selectedId, onSelect, baseWidth = 380, loop = true }: {
-  items: ProjectCarouselItem[];
-  selectedId: string;
-  onSelect: (id: string) => void;
-  baseWidth?: number;
-  autoplay?: boolean;
-  autoplayDelay?: number;
-  pauseOnHover?: boolean;
-  loop?: boolean;
-}) {
-  const itemWidth = Math.min(baseWidth, 720) - 32;
-  const offset = itemWidth + PROJECT_CAROUSEL_GAP;
-  const rendered = useMemo(() => loop && items.length ? [items[items.length - 1], ...items, items[0]] : items, [items, loop]);
-  const selectedIndex = Math.max(0, items.findIndex((item) => item.id === selectedId));
-  const [position, setPosition] = useState(loop ? selectedIndex + 1 : selectedIndex);
-  const x = useMotionValue(0);
-  const [animating, setAnimating] = useState(false);
-
-  useEffect(() => {
-    const target = loop ? selectedIndex + 1 : selectedIndex;
-    setPosition(target);
-    x.set(-target * offset);
-  }, [selectedIndex, loop, offset, x]);
-
-  const transition = PROJECT_CAROUSEL_SPRING;
-  const activeIndex = items.length ? (loop ? (position - 1 + items.length) % items.length : Math.min(position, items.length - 1)) : 0;
-
-  const selectPosition = (next: number) => {
-    setPosition(Math.max(0, Math.min(next, rendered.length - 1)));
-  };
-
-  if (!items.length) return null;
-
-  return <div className="project-carousel" style={{ width: 'min(380px, 100%)' }}>
-    <motion.div
-      className="project-carousel__track"
-      drag={animating ? false : 'x'}
-      dragConstraints={loop ? undefined : { left: -offset * Math.max(rendered.length - 1, 0), right: 0 }}
-      style={{ width: itemWidth, gap: PROJECT_CAROUSEL_GAP, perspective: 1000, perspectiveOrigin: (position * offset + itemWidth / 2) + 'px 50%', x }}
-      animate={{ x: -position * offset }}
-      transition={transition}
-      onAnimationStart={() => setAnimating(true)}
-      onAnimationComplete={() => {
-        if (loop && position === rendered.length - 1) {
-          setPosition(1);
-          x.set(-offset);
-        } else if (loop && position === 0) {
-          const target = items.length;
-          setPosition(target);
-          x.set(-target * offset);
-        } else {
-          const active = (position - 1 + items.length) % items.length;
-          if (items[active]) onSelect(items[active].id);
-        }
-        setAnimating(false);
-      }}
-      onDragEnd={(_, info) => {
-        const direction = info.offset.x < 0 || info.velocity.x < -500 ? 1 : info.offset.x > 0 || info.velocity.x > 500 ? -1 : 0;
-        if (direction) selectPosition(position + direction);
-      }}
-    >
-      {rendered.map((item, index) => (
-        <ProjectCarouselCard
-          key={item.id + '-' + index}
-          item={item}
-          index={index}
-          x={x}
-          offset={offset}
-          itemWidth={itemWidth}
-          transition={transition}
-        />
-      ))}
-    </motion.div>
-    <div className="project-carousel__indicators">
-      {items.map((item, index) => <motion.button key={item.id} type="button" className={activeIndex === index ? 'active' : ''} aria-label={'Select ' + item.title} aria-current={activeIndex === index} animate={{ scale: activeIndex === index ? 1.2 : 1 }} onClick={() => { onSelect(item.id); selectPosition(loop ? index + 1 : index); }} transition={{ duration: .15 }} />)}
+function ProjectPreview({ project, compact = false }: { project: Project; compact?: boolean }) {
+  const state = project.id === '04' ? 'MODEL' : project.id === '02' ? 'STOREFRONT' : project.id === '03' ? 'PLATFORM' : project.id === '05' ? 'HOME' : 'SYSTEM';
+  return <div className={`project-orbit-preview project-orbit-preview--${project.tone} ${compact ? 'is-compact' : ''}`}>
+    <div className="project-preview-top"><span>{project.id} / {state}</span><span>LIVE</span></div>
+    <div className="project-preview-window">
+      <div className="project-preview-sidebar"><i /><i /><i /><i /></div>
+      <div className="project-preview-main">
+        <span className="project-preview-line project-preview-line--wide" />
+        <span className="project-preview-line" />
+        <div className="project-preview-grid"><i /><i /><i /></div>
+        <div className="project-preview-chart"><i /><i /><i /><i /><i /></div>
+      </div>
     </div>
   </div>;
 }
 
+function ProjectOrbitNode({ project, hovered, onHover, onSelect }: {
+  project: Project;
+  hovered: boolean;
+  onHover: (id: string | null) => void;
+  onSelect: (project: Project) => void;
+}) {
+  return <button
+    type="button"
+    className={`project-orbit-node project-orbit-node--${project.id} ${hovered ? 'is-hovered' : ''}`}
+    onMouseEnter={() => { onHover(project.id); onSelect(project); }}
+    onMouseLeave={() => onHover(null)}
+    onFocus={() => { onHover(project.id); onSelect(project); }}
+    onBlur={() => onHover(null)}
+    onClick={() => onSelect(project)}
+    aria-label={`Preview ${project.title}`}
+  >
+    <span className="project-orbit-node__halo" />
+    <span className="project-orbit-node__core"><span>{project.id}</span></span>
+    <span className="project-orbit-node__label">{project.title}</span>
+    <span className="project-orbit-node__meta">{project.subtitle}</span>
+    <span className="project-orbit-node__preview"><ProjectPreview project={project} compact /></span>
+  </button>;
+}
+
+function ProjectOrbit({ selectedId, onSelect }: { selectedId: string; onSelect: (project: Project) => void }) {
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const reducedMotion = useReducedMotion();
+  const focused = projects.find((project) => project.id === (hoveredId ?? selectedId)) ?? projects[0];
+
+  return <div className={`project-orbit project-orbit--${focused.tone} ${hoveredId ? "is-hovering" : ""}`}>
+    <div className="project-orbit__eyebrow"><span>ORBITAL INDEX</span><b>{String(projects.length).padStart(2, '0')} BUILDS</b></div>
+    <motion.div className="project-orbit__rings" aria-hidden
+      animate={reducedMotion ? undefined : { rotate: 360 }}
+      transition={reducedMotion ? undefined : { duration: 90, repeat: Infinity, ease: 'linear' }}
+    >
+      <span className="project-orbit__ring project-orbit__ring--outer" />
+      <span className="project-orbit__ring project-orbit__ring--middle" />
+      <span className="project-orbit__ring project-orbit__ring--inner" />
+      <span className="project-orbit__axis project-orbit__axis--x" />
+      <span className="project-orbit__axis project-orbit__axis--y" />
+    </motion.div>
+
+    <div className="project-orbit__sun">
+      <span>03 / SELECTED WORK</span>
+      <strong>WHAT I<br /><em>BUILD.</em></strong>
+      <small>PROJECT SYSTEM</small>
+    </div>
+
+    {projects.map((project) => <ProjectOrbitNode
+      key={project.id}
+      project={project}
+      hovered={hoveredId === project.id}
+      onHover={setHoveredId}
+      onSelect={onSelect}
+    />)}
+
+    <AnimatePresence mode="wait">
+      {hoveredId ? <motion.div
+        key={focused.id}
+        className={`project-orbit-detail project-orbit-detail--${focused.tone}`}
+        initial={reducedMotion ? false : { opacity: 0, y: 12, scale: .97 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={reducedMotion ? undefined : { opacity: 0, y: -8, scale: .98 }}
+        transition={{ duration: .28, ease: [0.22, 1, 0.36, 1] }}
+        style={{ x: '-50%', y: '-50%' }}
+      >
+        <div className="project-orbit-detail__header">
+          <span>{focused.id} / PROJECT</span>
+          <b>HOVER STATE</b>
+        </div>
+        <div className="project-orbit-detail__body">
+          <div className="project-orbit-detail__visual"><ProjectPreview project={focused} /></div>
+          <div className="project-orbit-detail__copy">
+            <h3>{focused.title}</h3>
+            <p>{focused.subtitle}</p>
+            <small>{focused.tech}</small>
+            <span>{focused.contribution}</span>
+          </div>
+        </div>
+      </motion.div> : null}
+    </AnimatePresence>
+  </div>;
+}
 
 
-type Project = (typeof projects)[number];
 
 function ChapterReveal({ progress, center, children }: { progress: MotionValue<number>; center: number; children: ReactNode }) {
   const reducedMotion = useReducedMotion();
@@ -167,50 +156,13 @@ export function AboutChapter({ progress }: ChapterProps) {
 }
 
 function ProjectDeck({ selectedId, onSelect }: { selectedId: string; onSelect: (project: Project) => void }) {
-  const selected = projects.find((project) => project.id === selectedId) ?? projects[0];
-  const reducedMotion = useReducedMotion();
-  const carouselItems = projects.map((project) => ({
-    id: project.id,
-    title: project.title,
-    description: project.subtitle,
-    icon: project.id,
-  }));
-
-  return <div className="project-system">
-    <ProjectCarousel
-      items={carouselItems}
-      selectedId={selected.id}
-      onSelect={(id) => {
-        const project = projects.find((item) => item.id === id);
-        if (project) onSelect(project);
-      }}
-      baseWidth={380}
-      autoplay={false}
-      pauseOnHover
-      loop
-    />
-
-    <div className={`project-feature project-feature-${selected.tone}`}>
-      <AnimatePresence mode="wait" initial={false}>
-        <motion.article key={selected.id} className="project-feature-card" initial={reducedMotion ? false : { opacity: 0, x: 24, scale: 0.985 }} animate={{ opacity: 1, x: 0, scale: 1 }} exit={reducedMotion ? undefined : { opacity: 0, x: -18, scale: 0.985 }} transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}>
-          <div className="project-feature-top"><span>{selected.id} / SELECTED BUILD</span><span>{selected.tone.toUpperCase()}</span></div>
-          <h3>{selected.title}</h3>
-          <h4>{selected.subtitle}</h4>
-          <p>{selected.description}</p>
-          <div className="project-contribution"><span>CONTRIBUTION</span>{selected.contribution}</div>
-          <small>{selected.tech}</small>
-          <a href="#contact">Discuss this build <span>↗</span></a>
-        </motion.article>
-      </AnimatePresence>
-      <div className="project-signal" aria-hidden><span /><span /><span /></div>
-    </div>
-  </div>;
+  return <ProjectOrbit selectedId={selectedId} onSelect={onSelect} />;
 }
 
 export function ProjectsChapter({ progress, selectedProjectId, onSelectProject }: ChapterProps & { selectedProjectId: string; onSelectProject: (project: Project) => void }) {
   return <section id="projects" className="journey-chapter projects-chapter">
     <ChapterReveal progress={progress} center={0.395}>
-      <div className="chapter-copy"><div className="section-kicker">03 / SELECTED WORK</div><h2>WHAT I <em>BUILD.</em></h2><p>Select a build. The workstation transforms with the project — interface, system signals, light and working state all change together.</p></div>
+      <div className="chapter-copy projects-chapter-copy"><div className="section-kicker">03 / SELECTED WORK</div><p>Five builds. One system. Hover a project to bring its interface into focus.</p></div>
       <ProjectDeck selectedId={selectedProjectId} onSelect={onSelectProject} />
     </ChapterReveal>
   </section>;
