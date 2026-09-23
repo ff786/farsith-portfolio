@@ -15,7 +15,7 @@ function AvatarFrame({ stage, index, progress }: { stage: typeof journeyStages[n
   const scale = useTransform(progress, [fadeStart, fadePeak, fadeEnd], [0.975, 1, 0.975]);
   const blur = useTransform(progress, [fadeStart, fadePeak, fadeEnd], ['3px', '0px', '3px']);
   return <motion.div className={`journey-avatar avatar-${index}`} style={{ opacity, scale, filter: blur }} aria-hidden>
-    <Image src={stage.image} alt={stage.alt} fill sizes="(max-width: 900px) 80vw, 42vw" priority={index < 2} />
+    <Image src={stage.image} alt={stage.alt} fill sizes="(max-width: 900px) 80vw, 42vw" priority={index === 0} loading={index === 0 ? "eager" : "lazy"} />
   </motion.div>;
 }
 
