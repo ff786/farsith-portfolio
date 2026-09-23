@@ -32,11 +32,14 @@ function ProjectEnvironment({ progress, activeStage, selectedProjectId }: { prog
   const screenTilt = useTransform(reaction, [0, 1], [0, projectIndex % 2 === 0 ? -1.4 : 1.4]);
   return <motion.div className={`project-environment project-environment--${selected.tone}`} style={{ opacity, x, y, scale, rotateZ: rotate, ['--project-glow' as string]: projectGlow, ['--screen-tilt' as string]: screenTilt }} aria-hidden={activeStage !== 2}>
     <div className="workbench-label"><span>03 / WORKBENCH</span><b>{selected.id} / {selected.tone.toUpperCase()}</b></div>
+    {/* Workbench preview window — disabled: the orbit's hover card now shows the project detail.
     <div className="workbench-window"><div className="workbench-top"><i /><i /><i /><span>farsith / {selected.title.toLowerCase()}</span><em>LIVE STATE</em></div>
       <div className="workbench-body"><div className="workbench-side"><b>PROJECTS</b>{projects.map((project) => <span key={project.id} className={project.id === selected.id ? 'selected' : ''}>{project.id} · {project.title}</span>)}</div>
         <div className="workbench-main"><div className="workbench-heading"><span>{selected.title.toUpperCase()}</span><b>{selected.subtitle}</b></div><div className="workbench-metrics"><div><small>STATE</small><strong>{selected.id === '04' ? 'MODEL' : selected.id === '02' ? 'STOREFRONT' : selected.id === '03' ? 'PLATFORM' : selected.id === '05' ? 'HOME' : 'SYSTEM'}</strong></div><div><small>STACK</small><strong>{selected.tech.split(' · ')[0]}</strong></div><div><small>BUILD</small><strong>ACTIVE</strong></div></div><div className="workbench-chart"><i /><i /><i /><i /><i /><i /></div><div className="workbench-code"><span>{selected.id === '01' ? 'const checkout = await pos.sale();' : selected.id === '02' ? 'const cart = await storefront.add();' : selected.id === '03' ? 'const page = buildAgencySection();' : selected.id === '04' ? 'const signs = await model.predict();' : 'const home = await inventory.sync();'}</span><span>{selected.id === '04' ? 'await recognition.validate();' : 'await system.validate();'}</span></div></div>
       </div>
-    </div><div className="workbench-glow" /><div className="workbench-ambient"><i /><i /><i /><span>{selected.tone}</span></div>
+    </div>
+    */}
+    <div className="workbench-glow" /><div className="workbench-ambient"><i /><i /><i /><span>{selected.tone}</span></div>
   </motion.div>;
 }
 
