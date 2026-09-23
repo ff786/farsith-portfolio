@@ -22,14 +22,13 @@ function ProjectPreview({ project, compact = false }: { project: Project; compac
   </div>;
 }
 
-function ProjectOrbitNode({ project, index, hovered, onHover, onSelect }: {
+function ProjectOrbitNode({ project, hovered, onHover, onSelect }: {
   project: Project;
-  index: number;
   hovered: boolean;
   onHover: (id: string | null) => void;
   onSelect: (project: Project) => void;
 }) {
-  return <motion.button
+  return <button
     type="button"
     className={`project-orbit-node project-orbit-node--${project.id} ${hovered ? 'is-hovered' : ''}`}
     onMouseEnter={() => { onHover(project.id); onSelect(project); }}
@@ -37,8 +36,6 @@ function ProjectOrbitNode({ project, index, hovered, onHover, onSelect }: {
     onFocus={() => { onHover(project.id); onSelect(project); }}
     onBlur={() => onHover(null)}
     onClick={() => onSelect(project)}
-    whileHover={{ scale: 1.08 }}
-    whileTap={{ scale: 0.97 }}
     aria-label={`Preview ${project.title}`}
   >
     <span className="project-orbit-node__halo" />
@@ -46,7 +43,7 @@ function ProjectOrbitNode({ project, index, hovered, onHover, onSelect }: {
     <span className="project-orbit-node__label">{project.title}</span>
     <span className="project-orbit-node__meta">{project.subtitle}</span>
     <span className="project-orbit-node__preview"><ProjectPreview project={project} compact /></span>
-  </motion.button>;
+  </button>;
 }
 
 function ProjectOrbit({ selectedId, onSelect }: { selectedId: string; onSelect: (project: Project) => void }) {
@@ -73,10 +70,9 @@ function ProjectOrbit({ selectedId, onSelect }: { selectedId: string; onSelect: 
       <small>PROJECT SYSTEM</small>
     </div>
 
-    {projects.map((project, index) => <ProjectOrbitNode
+    {projects.map((project) => <ProjectOrbitNode
       key={project.id}
       project={project}
-      index={index}
       hovered={hoveredId === project.id}
       onHover={setHoveredId}
       onSelect={onSelect}
@@ -90,6 +86,7 @@ function ProjectOrbit({ selectedId, onSelect }: { selectedId: string; onSelect: 
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={reducedMotion ? undefined : { opacity: 0, y: -8, scale: .98 }}
         transition={{ duration: .28, ease: [0.22, 1, 0.36, 1] }}
+        style={{ x: '-50%', y: '-50%' }}
       >
         <div className="project-orbit-detail__header">
           <span>{focused.id} / PROJECT</span>
