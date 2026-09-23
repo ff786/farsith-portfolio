@@ -2,9 +2,91 @@ import { AnimatePresence, motion, useReducedMotion, useTransform, type MotionVal
 import { useState, type ReactNode } from 'react';
 import { site, stack, projects } from '../../data/site';
 import { InfiniteTechSpiral } from './infinite-tech-spiral';
-import { ProjectCarousel } from './project-carousel';
 
 type ChapterProps = { progress: MotionValue<number> };
+
+const PROJECT_CAROUSEL_GAP = 16;
+const PROJECT_CAROUSEL_SPRING = { type: 'spring' as const, stiffness: 300, damping: 30 };
+
+type ProjectCarouselItem = { title: string; description: string; id: string; icon: ReactNode };
+
+function ProjectCarousel({ items, selectedId, onSelect, baseWidth = 380, loop = true }: {
+  items: ProjectCarouselItem[];
+  selectedId: string;
+  onSelect: (id: string) => void;
+  baseWidth?: number;
+  autoplay?: boolean;
+  autoplayDelay?: number;
+  pauseOnHover?: boolean;
+  loop?: boolean;
+}) {
+  const itemWidth = Math.min(baseWidth, 720) - 32;
+  const offset = itemWidth + PROJECT_CAROUSEL_GAP;
+  const rendered = useMemo(() => loop && items.length ? [items[items.length - 1], ...items, items[0]] : items, [items, loop]);
+  const selectedIndex = Math.max(0, items.findIndex((item) => item.id === selectedId));
+  const [position, setPosition] = useState(loop ? selectedIndex + 1 : selectedIndex);
+  const x = useMotionValue(0);
+  const [animating, setAnimating] = useState(false);
+
+  useEffect(() => {
+    const target = loop ? selectedIndex + 1 : selectedIndex;
+    setPosition(target);
+    x.set(-target * offset);
+  }, [selectedIndex, loop, offset, x]);
+
+  const transition = PROJECT_CAROUSEL_SPRING;
+  const activeIndex = items.length ? (loop ? (position - 1 + items.length) % items.length : Math.min(position, items.length - 1)) : 0;
+
+  const selectPosition = (next: number) => {
+    setPosition(Math.max(0, Math.min(next, rendered.length - 1)));
+  };
+
+  if (!items.length) return null;
+
+  return <div className="project-carousel" style={{ width: 'min(380px, 100%)' }}>
+    <motion.div
+      className="project-carousel__track"
+      drag={animating ? false : 'x'}
+      dragConstraints={loop ? undefined : { left: -offset * Math.max(rendered.length - 1, 0), right: 0 }}
+      style={{ width: itemWidth, gap: PROJECT_CAROUSEL_GAP, perspective: 1000, perspectiveOrigin: (position * offset + itemWidth / 2) + 'px 50%', x }}
+      animate={{ x: -position * offset }}
+      transition={transition}
+      onAnimationStart={() => setAnimating(true)}
+      onAnimationComplete={() => {
+        if (loop && position === rendered.length - 1) {
+          setPosition(1);
+          x.set(-offset);
+        } else if (loop && position === 0) {
+          const target = items.length;
+          setPosition(target);
+          x.set(-target * offset);
+        } else {
+          const active = (position - 1 + items.length) % items.length;
+          if (items[active]) onSelect(items[active].id);
+        }
+        setAnimating(false);
+      }}
+      onDragEnd={(_, info) => {
+        const direction = info.offset.x < 0 || info.velocity.x < -500 ? 1 : info.offset.x > 0 || info.velocity.x > 500 ? -1 : 0;
+        if (direction) selectPosition(position + direction);
+      }}
+    >
+      {rendered.map((item, index) => {
+        const range = [-(index + 1) * offset, -index * offset, -(index - 1) * offset];
+        const rotateY = useTransform(x, range, [90, 0, -90], { clamp: false });
+        return <motion.div key={item.id + '-' + index} className="project-carousel__item" style={{ width: itemWidth, rotateY }} transition={transition}>
+          <div className="project-carousel__item-header"><span className="project-carousel__icon">{item.icon}</span><span className="project-carousel__item-id">{item.id}</span></div>
+          <div className="project-carousel__item-content"><div className="project-carousel__item-title">{item.title}</div><p className="project-carousel__item-description">{item.description}</p></div>
+        </motion.div>;
+      })}
+    </motion.div>
+    <div className="project-carousel__indicators">
+      {items.map((item, index) => <motion.button key={item.id} type="button" className={activeIndex === index ? 'active' : ''} aria-label={'Select ' + item.title} aria-current={activeIndex === index} animate={{ scale: activeIndex === index ? 1.2 : 1 }} onClick={() => { onSelect(item.id); selectPosition(loop ? index + 1 : index); }} transition={{ duration: .15 }} />)}
+    </div>
+  </div>;
+}
+
+
 type Project = (typeof projects)[number];
 
 function ChapterReveal({ progress, center, children }: { progress: MotionValue<number>; center: number; children: ReactNode }) {
