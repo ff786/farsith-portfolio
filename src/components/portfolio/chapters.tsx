@@ -85,7 +85,7 @@ function ProjectDeck({ selectedId, onSelect }: { selectedId: string; onSelect: (
 export function ProjectsChapter({ progress, selectedProjectId, onSelectProject }: ChapterProps & { selectedProjectId: string; onSelectProject: (project: Project) => void }) {
   return <section id="projects" className="journey-chapter projects-chapter">
     <ChapterReveal progress={progress} center={0.395}>
-      <div className="chapter-copy"><div className="section-kicker">03 / SELECTED WORK</div><h2>WHAT I <em>BUILD.</em></h2><p>Select a build. The workstation reacts with the same project state.</p></div>
+      <div className="chapter-copy"><div className="section-kicker">03 / SELECTED WORK</div><h2>WHAT I <em>BUILD.</em></h2><p>Select a build. The workstation transforms with the project — interface, system signals, light and working state all change together.</p></div>
       <ProjectDeck selectedId={selectedProjectId} onSelect={onSelectProject} />
     </ChapterReveal>
   </section>;
