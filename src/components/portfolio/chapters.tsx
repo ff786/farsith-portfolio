@@ -1,45 +1,112 @@
-import { motion, useReducedMotion, useTransform, type MotionValue } from 'framer-motion';
-import type { ReactNode } from 'react';
+import { AnimatePresence, motion, useReducedMotion, useTransform, type MotionValue } from 'framer-motion';
+import { useState, type ReactNode } from 'react';
 import { site, stack, projects } from '../../data/site';
 
 type ChapterProps = { progress: MotionValue<number> };
+type Project = (typeof projects)[number];
 
 function ChapterReveal({ progress, center, children }: { progress: MotionValue<number>; center: number; children: ReactNode }) {
   const reducedMotion = useReducedMotion();
   const revealStart = Math.max(0, center - 0.095);
   const isHero = center <= 0.055;
-  const opacity = useTransform(
-    progress,
-    isHero ? [0, center + 0.07] : [revealStart, center - 0.035, center + 0.07],
-    isHero ? [1, 0.86] : [0, 1, 0.86],
-  );
-  const y = useTransform(
-    progress,
-    isHero ? [0, center + 0.07] : [revealStart, center - 0.035, center + 0.07],
-    isHero ? [0, -12] : [34, 0, -12],
-  );
-  const blur = useTransform(
-    progress,
-    isHero ? [0, center + 0.07] : [revealStart, center - 0.035, center + 0.07],
-    isHero ? ['0px', '1px'] : ['7px', '0px', '1px'],
-  );
+  const opacity = useTransform(progress, isHero ? [0, center + 0.07] : [revealStart, center - 0.035, center + 0.07], isHero ? [1, 0.86] : [0, 1, 0.86]);
+  const y = useTransform(progress, isHero ? [0, center + 0.07] : [revealStart, center - 0.035, center + 0.07], isHero ? [0, -12] : [34, 0, -12]);
+  const blur = useTransform(progress, isHero ? [0, center + 0.07] : [revealStart, center - 0.035, center + 0.07], isHero ? ['0px', '1px'] : ['7px', '0px', '1px']);
   return <motion.div className="chapter-reveal" style={reducedMotion ? undefined : { opacity, y, filter: blur }}>{children}</motion.div>;
 }
 
 export function HeroChapter({ progress }: ChapterProps) {
-  return <section id="home" className="journey-chapter hero-chapter"><ChapterReveal progress={progress} center={0.055}><div className="chapter-copy"><div className="eyebrow">COLOMBO · SRI LANKA / SOFTWARE DEVELOPER</div><h1>FARSITH<br /><em>FAWZER</em></h1><p>Building ideas into <strong>real-world software.</strong></p><div className="hero-actions"><a className="btn primary" href="#projects">Explore My Work <span>↘</span></a><a className="btn ghost" href={`mailto:${site.email}`}>Let’s Connect <span>↗</span></a></div><div className="hero-meta"><span>FULL-STACK</span><span>WEB APPLICATIONS</span><span>SOFTWARE ENGINEERING</span></div></div></ChapterReveal><div className="chapter-note"><span>01 / ENTER THE WORLD</span><p>The portfolio moves with the avatar. Scroll to change the camera, environment and point of view.</p></div></section>;
+  return <section id="home" className="journey-chapter hero-chapter">
+    <ChapterReveal progress={progress} center={0.055}>
+      <div className="chapter-copy">
+        <div className="eyebrow">COLOMBO · SRI LANKA / SOFTWARE DEVELOPER</div>
+        <h1>FARSITH<br /><em>FAWZER</em></h1>
+        <p>Building ideas into <strong>real-world software.</strong></p>
+        <div className="hero-actions"><a className="btn primary" href="#projects">Explore My Work <span>↘</span></a><a className="btn ghost" href={`mailto:${site.email}`}>Let’s Connect <span>↗</span></a></div>
+        <div className="hero-meta"><span>FULL-STACK</span><span>WEB APPLICATIONS</span><span>SOFTWARE ENGINEERING</span></div>
+      </div>
+    </ChapterReveal>
+    <div className="chapter-note"><span>01 / ENTER THE WORLD</span><p>The portfolio moves with the avatar. Scroll to change the camera, environment and point of view.</p></div>
+  </section>;
 }
 
 export function AboutChapter({ progress }: ChapterProps) {
-  return <section id="about" className="journey-chapter about-chapter"><ChapterReveal progress={progress} center={0.225}><div className="chapter-copy"><div className="section-kicker">02 / MEET FARSITH</div><h2>BUILDING SOFTWARE<br /><span>WITH PURPOSE.</span></h2><p className="lead">Software Developer with hands-on experience building modern web applications across e-commerce, point-of-sale, digital platforms, healthcare, and accessibility-focused systems.</p><p>Experienced across frontend development, backend integration, databases, authentication and machine-learning-powered applications. The focus is practical: understand the problem, build the system, and make the experience feel considered.</p><div className="signature">BUILD · SOLVE · IMPROVE · REPEAT.</div></div><div className="chapter-card about-facts"><span>THE PERSON BEHIND THE SOFTWARE</span><div><b>Full-Stack Development</b><small>Web applications and real-world systems</small></div><div><b>Software Engineering</b><small>Problem solving, architecture and iteration</small></div><div><b>SLIIT · 2022 — March 2027</b><small>B.Sc. (Hons) Information Technology — Software Engineering</small></div></div></ChapterReveal></section>;
+  return <section id="about" className="journey-chapter about-chapter">
+    <ChapterReveal progress={progress} center={0.225}>
+      <div className="about-layout">
+        <div className="chapter-copy">
+          <div className="section-kicker">02 / MEET FARSITH</div>
+          <h2>BUILDING SOFTWARE<br /><span>WITH PURPOSE.</span></h2>
+          <p className="lead">Software Developer with hands-on experience building modern web applications across e-commerce, point-of-sale, digital platforms, healthcare, and accessibility-focused systems.</p>
+          <p>Experienced across frontend development, backend integration, databases, authentication and machine-learning-powered applications. The focus is practical: understand the problem, build the system, and make the experience feel considered.</p>
+          <div className="signature">BUILD · SOLVE · IMPROVE · REPEAT.</div>
+        </div>
+        <div className="chapter-card about-facts">
+          <span>THE PERSON BEHIND THE SOFTWARE</span>
+          <div><b>Full-Stack Development</b><small>Web applications and real-world systems</small></div>
+          <div><b>Software Engineering</b><small>Problem solving, architecture and iteration</small></div>
+          <div><b>SLIIT · 2022 — March 2027</b><small>B.Sc. (Hons) Information Technology — Software Engineering</small></div>
+        </div>
+      </div>
+    </ChapterReveal>
+  </section>;
 }
 
-export function ProjectsChapter({ progress }: ChapterProps) {
-  return <section id="projects" className="journey-chapter projects-chapter"><ChapterReveal progress={progress} center={0.395}><div className="chapter-copy"><div className="section-kicker">03 / SELECTED WORK</div><h2>WHAT I <em>BUILD.</em></h2><p>As the camera moves behind the workstation, each project becomes part of the environment.</p></div><div className="project-rail">{projects.map((project) => <article key={project.id} className={`journey-project journey-project-${project.tone}`}><span>{project.id}</span><h3>{project.title}</h3><h4>{project.subtitle}</h4><p>{project.description}</p><small>{project.tech}</small><a href="#contact">Discuss this build ↗</a></article>)}</div></ChapterReveal></section>;
+function ProjectDeck({ selectedId, onSelect }: { selectedId: string; onSelect: (project: Project) => void }) {
+  const selected = projects.find((project) => project.id === selectedId) ?? projects[0];
+  const reducedMotion = useReducedMotion();
+
+  return <div className="project-system">
+    <div className="project-index" role="tablist" aria-label="Select a project">
+      {projects.map((project, index) => (
+        <button key={project.id} type="button" role="tab" aria-selected={project.id === selected.id} className={project.id === selected.id ? 'active' : ''} onClick={() => onSelect(project)}>
+          <span>{project.id}</span><b>{project.title}</b><i />
+        </button>
+      ))}
+    </div>
+    <div className={`project-feature project-feature-${selected.tone}`}>
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.article key={selected.id} className="project-feature-card" initial={reducedMotion ? false : { opacity: 0, x: 24, scale: 0.985 }} animate={{ opacity: 1, x: 0, scale: 1 }} exit={reducedMotion ? undefined : { opacity: 0, x: -18, scale: 0.985 }} transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}>
+          <div className="project-feature-top"><span>{selected.id} / SELECTED BUILD</span><span>{selected.tone.toUpperCase()}</span></div>
+          <h3>{selected.title}</h3>
+          <h4>{selected.subtitle}</h4>
+          <p>{selected.description}</p>
+          <div className="project-contribution"><span>CONTRIBUTION</span>{selected.contribution}</div>
+          <small>{selected.tech}</small>
+          <a href="#contact">Discuss this build <span>↗</span></a>
+        </motion.article>
+      </AnimatePresence>
+      <div className="project-signal" aria-hidden><span /><span /><span /></div>
+    </div>
+  </div>;
+}
+
+export function ProjectsChapter({ progress, selectedProjectId, onSelectProject }: ChapterProps & { selectedProjectId: string; onSelectProject: (project: Project) => void }) {
+  return <section id="projects" className="journey-chapter projects-chapter">
+    <ChapterReveal progress={progress} center={0.395}>
+      <div className="chapter-copy"><div className="section-kicker">03 / SELECTED WORK</div><h2>WHAT I <em>BUILD.</em></h2><p>Select a build. The workstation reacts with the same project state.</p></div>
+      <ProjectDeck selectedId={selectedProjectId} onSelect={onSelectProject} />
+    </ChapterReveal>
+  </section>;
 }
 
 export function ToolkitChapter({ progress }: ChapterProps) {
-  return <section id="toolkit" className="journey-chapter toolkit-chapter"><ChapterReveal progress={progress} center={0.565}><div className="chapter-copy"><div className="section-kicker">04 / MY TOOLKIT</div><h2>THE TOOLS<br /><span>BEHIND THE WORK.</span></h2><p>A practical stack spanning interface design, application logic, data, infrastructure and applied machine learning.</p></div><div className="toolkit-orbit">{stack.map(([name, desc], index) => <motion.div key={name} className="orbit-tech" whileHover={{ y: -6, scale: 1.03 }}><span>{String(index + 1).padStart(2, '0')}</span><b>{name}</b><small>{desc}</small></motion.div>)}</div></ChapterReveal></section>;
+  const reducedMotion = useReducedMotion();
+  return <section id="toolkit" className="journey-chapter toolkit-chapter">
+    <ChapterReveal progress={progress} center={0.565}>
+      <div className="chapter-copy"><div className="section-kicker">04 / MY TOOLKIT</div><h2>THE TOOLS<br /><span>BEHIND THE WORK.</span></h2><p>A practical stack spanning interface design, application logic, data, infrastructure and applied machine learning.</p></div>
+      <div className="toolkit-system">
+        <div className="toolkit-core"><span>STACK</span><b>{String(stack.length).padStart(2, '0')}</b><small>TOOLS IN ROTATION</small></div>
+        <div className="toolkit-stream" aria-label="Technology stack">
+          {stack.map(([name, desc], index) => (
+            <motion.div key={name} className="orbit-tech" initial={reducedMotion ? false : { opacity: 0, y: 22 }} whileInView={reducedMotion ? undefined : { opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.25 }} transition={{ duration: 0.45, delay: Math.min(index * 0.025, 0.45) }} whileHover={reducedMotion ? undefined : { y: -5, scale: 1.025 }}>
+              <span>{String(index + 1).padStart(2, '0')}</span><b>{name}</b><small>{desc}</small>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </ChapterReveal>
+  </section>;
 }
 
 export function ExperienceChapter({ progress }: ChapterProps) {
