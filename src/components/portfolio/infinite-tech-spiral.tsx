@@ -76,8 +76,12 @@ export function InfiniteTechSpiral({ items, progress }: InfiniteTechSpiralProps)
       const height = Math.max(bounds.height, 1);
       const cardWidth = clamp(width * 0.12, 78, 118);
       const cardHeight = clamp(height * 0.19, 76, 116);
-      const radius = clamp(width * 0.19, 120, 230);
-      const verticalSpacing = clamp(height * 0.095, 34, 62);
+      // Keep the animated tech flow visually inside its own lane,
+      // leaving the avatar's foreground space clear on the right.
+      const radius = clamp(width * 0.17, 108, 205);
+      const verticalSpacing = clamp(height * 0.085, 32, 56);
+      const horizontalOffset = -56;
+      const verticalOffset = -8;
       const cardsPerTurn = 7;
       const perspective = 1050;
 
@@ -92,7 +96,7 @@ export function InfiniteTechSpiral({ items, progress }: InfiniteTechSpiralProps)
         const fade = 1 - smoothstep(0.68, 1, edge);
         const angle = offset * (360 / cardsPerTurn) - 8;
         const radians = (angle * Math.PI) / 180;
-        const x = Math.sin(radians) * radius;
+        const x = Math.sin(radians) * radius + horizontalOffset;
         const z = Math.cos(radians) * radius;
         const depthScale = clamp(perspective / Math.max(perspective - z, 1), 0.7, 1.38);
         const scale = (0.82 + focus * 0.22) * depthScale;
@@ -103,7 +107,7 @@ export function InfiniteTechSpiral({ items, progress }: InfiniteTechSpiralProps)
         card.style.width = `${cardWidth}px`;
         card.style.height = `${cardHeight}px`;
         card.style.transform =
-          `translate(-50%, -50%) translate3d(${x}px, ${offset * verticalSpacing}px, 0) rotateZ(${rotation}deg) scale(${scale})`;
+          `translate(-50%, -50%) translate3d(${x}px, ${offset * verticalSpacing + verticalOffset}px, 0) rotateZ(${rotation}deg) scale(${scale})`;
         card.style.opacity = opacity.toFixed(3);
         card.style.filter = blur > 0.05 ? `blur(${blur.toFixed(2)}px)` : 'none';
         card.style.zIndex = String(Math.round((z + radius) * 100) + index);
