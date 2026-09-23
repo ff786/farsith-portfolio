@@ -21,6 +21,7 @@ export function PortfolioPage() {
   const targetStageRef = useRef(0);
   const [loading, setLoading] = useState(true);
   const [activeStage, setActiveStage] = useState(0);
+  const [selectedProjectId, setSelectedProjectId] = useState('01');
   const { scrollYProgress } = useScroll({ target: journeyRef, offset: ['start start', 'end end'] });
 
   // One master progress value drives the whole experience. The spring keeps the
@@ -179,7 +180,7 @@ export function PortfolioPage() {
       <div className="journey-content">
         <HeroChapter progress={journeyProgress} />
         <AboutChapter progress={journeyProgress} />
-        <ProjectsChapter progress={journeyProgress} />
+        <ProjectsChapter progress={journeyProgress} selectedProjectId={selectedProjectId} onSelectProject={(project) => setSelectedProjectId(project.id)} />
         <ToolkitChapter progress={journeyProgress} />
         <ExperienceChapter progress={journeyProgress} />
         <ContactChapter progress={journeyProgress} />
