@@ -585,17 +585,25 @@
 /* Infinite tech spiral — adapted from the supplied InfiniteSpiral motion model. */
 /* -------------------------------------------------------------------------- */
 .toolkit-layout{
-  width:min(92vw,1180px);
+  width:min(94vw,1240px);
   min-height:72svh;
   margin:0 auto;
   display:grid;
-  grid-template-columns:minmax(280px,.72fr) minmax(0,1.28fr);
-  gap:clamp(30px,5vw,82px);
+  grid-template-columns:minmax(330px,.58fr) minmax(0,1.42fr);
+  gap:clamp(28px,4vw,58px);
   align-items:center;
 }
 .toolkit-layout .chapter-copy{
   width:auto!important;
   margin:0!important;
+  position:relative;
+  z-index:3;
+}
+.toolkit-spiral-stage{
+  position:relative;
+  z-index:2;
+  width:calc(100% + 50px);
+  margin-left:-25px;
 }
 .infinite-tech-spiral{
   position:relative;
@@ -681,6 +689,7 @@
   overflow:hidden;
 }
 .infinite-tech-spiral__center{
+  display:none;
   position:absolute;
   left:50%;
   top:50%;
@@ -725,6 +734,10 @@
     grid-template-columns:1fr;
     gap:24px;
     min-height:auto;
+  }
+  .toolkit-spiral-stage{
+    width:100%;
+    margin-left:0;
   }
   .infinite-tech-spiral{
     height:500px;
