@@ -352,3 +352,14 @@
 @media(max-width:640px){
   .avatar-stage:after{display:none}
 }
+
+
+/* Scroll choreography layers share one lightweight compositor surface. */
+.chapter-reveal{
+  position:relative;
+  width:100%;
+  will-change:transform,opacity,filter;
+}
+@media(prefers-reduced-motion:reduce){
+  .chapter-reveal{transform:none!important;filter:none!important;opacity:1!important}
+}
