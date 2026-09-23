@@ -2,8 +2,6 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion, useMotionValueEvent, useScroll, useSpring } from 'framer-motion';
-import { StructureFlowCollection } from '@designcodeio/threeui';
-import '@designcodeio/threeui/style.css';
 import { site } from '../../data/site';
 import { journeyStages } from './journey-stages';
 import { Nav } from './nav';
@@ -175,15 +173,6 @@ export function PortfolioPage() {
 
     <main ref={journeyRef} className="portfolio-journey">
       <div className="journey-sticky">
-        <StructureFlowCollection
-          variant="structure-flow"
-          speed={1.00}
-          pointSize={0.080}
-          opacity={0.40}
-          maskStart={0.20}
-          maskSolid={0.50}
-          className="journey-structure-flow"
-        />
         <AvatarStage progress={journeyProgress} activeStage={activeStage} />
         <JourneyProgress activeStage={activeStage} />
       </div>
