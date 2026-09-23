@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { motion, useScroll, useSpring } from 'framer-motion';
+import { motion, useMotionValueEvent, useScroll, useSpring } from 'framer-motion';
 import { site } from '../../data/site';
 import { journeyStages } from './journey-stages';
 import { Nav } from './nav';
@@ -30,13 +30,9 @@ export function PortfolioPage() {
     return () => clearTimeout(timer);
   }, []);
 
-  useEffect(
-    () =>
-      scrollYProgress.on('change', (value) =>
-        setActiveStage(Math.min(journeyStages.length - 1, Math.floor(value * journeyStages.length))),
-      ),
-    [scrollYProgress],
-  );
+  useMotionValueEvent(journeyProgress, 'change', (value) => {
+    setActiveStage(Math.min(journeyStages.length - 1, Math.floor(value * journeyStages.length)));
+  });
 
   useEffect(() => {
     const move = (event: MouseEvent) => {
