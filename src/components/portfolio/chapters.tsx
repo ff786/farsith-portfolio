@@ -54,7 +54,7 @@ function ProjectOrbit({ selectedId, onSelect }: { selectedId: string; onSelect: 
   const reducedMotion = useReducedMotion();
   const focused = projects.find((project) => project.id === (hoveredId ?? selectedId)) ?? projects[0];
 
-  return <div className={`project-orbit project-orbit--${focused.tone}`}>
+  return <div className={`project-orbit project-orbit--${focused.tone} ${hoveredId ? "is-hovering" : ""}`}>
     <div className="project-orbit__eyebrow"><span>ORBITAL INDEX</span><b>{String(projects.length).padStart(2, '0')} BUILDS</b></div>
     <motion.div className="project-orbit__rings" aria-hidden
       animate={reducedMotion ? undefined : { rotate: 360 }}
