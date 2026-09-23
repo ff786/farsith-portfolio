@@ -758,32 +758,3 @@
     transition:none;
   }
 }
-
-
-/* React Bits Galaxy background layer. */
-.journey-galaxy{
-  position:absolute;
-  inset:0;
-  z-index:0;
-  pointer-events:auto;
-  opacity:.72;
-  background:radial-gradient(circle at 50% 50%,rgba(9,15,24,.32),rgba(7,9,13,.9) 78%);
-}
-.journey-galaxy:after{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:radial-gradient(circle at 50% 48%,transparent 0%,rgba(7,9,13,.08) 42%,rgba(7,9,13,.62) 100%);
-  pointer-events:none;
-}
-.journey-sticky > .avatar-stage,
-.journey-sticky > .journey-progress{
-  position:relative;
-  z-index:1;
-}
-@media(max-width:640px){
-  .journey-galaxy{opacity:.52}
-}
-@media(prefers-reduced-motion:reduce){
-  .journey-galaxy{opacity:.28}
-}
