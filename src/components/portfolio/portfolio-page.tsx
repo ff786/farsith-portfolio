@@ -53,7 +53,7 @@ export function PortfolioPage() {
   }, []);
 
   useMotionValueEvent(journeyProgress, 'change', (value) => {
-    setActiveStage(Math.min(journeyStages.length - 1, Math.floor(value * journeyStages.length)));
+    setActiveStage(Math.min(journeyStages.length - 1, Math.round(value * (journeyStages.length - 1))));
   });
 
   useEffect(() => {
