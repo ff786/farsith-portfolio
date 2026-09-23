@@ -1,5 +1,3 @@
-'use client';
-
 import { Renderer, Program, Mesh, Color, Triangle } from 'ogl';
 import { useEffect, useRef } from 'react';
 import './Galaxy.css';
@@ -86,7 +84,7 @@ float Star(vec2 uv, float flare) {
 vec3 StarLayer(vec2 uv) {
   vec3 col = vec3(0.0);
 
-  vec2 gv = fract(uv) - 0.5;
+  vec2 gv = fract(uv) - 0.5; 
   vec2 id = floor(uv);
 
   for (int y = -1; y <= 1; y++) {
@@ -102,7 +100,7 @@ vec3 StarLayer(vec2 uv) {
       float blu = smoothstep(STAR_COLOR_CUTOFF, 1.0, Hash21(si + 3.0)) + STAR_COLOR_CUTOFF;
       float grn = min(red, blu) * seed;
       vec3 base = vec3(red, grn, blu);
-
+      
       float hue = atan(base.g - base.r, base.b - base.r) / (2.0 * 3.14159) + 0.5;
       hue = fract(hue + uHueShift / 360.0);
       float sat = length(base - vec3(dot(base, vec3(0.299, 0.587, 0.114)))) * uSaturation;
@@ -117,7 +115,7 @@ vec3 StarLayer(vec2 uv) {
       float twinkle = trisn(uTime * uSpeed + seed * 6.2831) * 0.5 + 1.0;
       twinkle = mix(1.0, twinkle, uTwinkleIntensity);
       star *= twinkle;
-
+      
       col += star * size * color;
     }
   }
@@ -130,7 +128,7 @@ void main() {
   vec2 uv = (vUv * uResolution.xy - focalPx) / uResolution.y;
 
   vec2 mouseNorm = uMouse - vec2(0.5);
-
+  
   if (uAutoCenterRepulsion > 0.0) {
     vec2 centerUV = vec2(0.0, 0.0);
     float centerDist = length(uv - centerUV);
@@ -200,7 +198,10 @@ export default function Galaxy({
   useEffect(() => {
     if (!ctnDom.current) return;
     const ctn = ctnDom.current;
-    const renderer = new Renderer({ alpha: transparent, premultipliedAlpha: false });
+    const renderer = new Renderer({
+      alpha: transparent,
+      premultipliedAlpha: false
+    });
     const gl = renderer.gl;
 
     if (transparent) {
@@ -224,7 +225,6 @@ export default function Galaxy({
         );
       }
     }
-
     window.addEventListener('resize', resize, false);
     resize();
 
@@ -243,7 +243,9 @@ export default function Galaxy({
         uDensity: { value: density },
         uHueShift: { value: hueShift },
         uSpeed: { value: speed },
-        uMouse: { value: new Float32Array([smoothMousePos.current.x, smoothMousePos.current.y]) },
+        uMouse: {
+          value: new Float32Array([smoothMousePos.current.x, smoothMousePos.current.y])
+        },
         uGlowIntensity: { value: glowIntensity },
         uSaturation: { value: saturation },
         uMouseRepulsion: { value: mouseRepulsion },
@@ -261,7 +263,6 @@ export default function Galaxy({
 
     function update(t) {
       animateId = requestAnimationFrame(update);
-
       if (!disableAnimation) {
         program.uniforms.uTime.value = t * 0.001;
         program.uniforms.uStarSpeed.value = (t * 0.001 * starSpeed) / 10.0;
@@ -270,6 +271,7 @@ export default function Galaxy({
       const lerpFactor = 0.05;
       smoothMousePos.current.x += (targetMousePos.current.x - smoothMousePos.current.x) * lerpFactor;
       smoothMousePos.current.y += (targetMousePos.current.y - smoothMousePos.current.y) * lerpFactor;
+
       smoothMouseActive.current += (targetMouseActive.current - smoothMouseActive.current) * lerpFactor;
 
       program.uniforms.uMouse.value[0] = smoothMousePos.current.x;
@@ -278,13 +280,14 @@ export default function Galaxy({
 
       renderer.render({ scene: mesh });
     }
-
     animateId = requestAnimationFrame(update);
     ctn.appendChild(gl.canvas);
 
     function handleMouseMove(e) {
       const rect = ctn.getBoundingClientRect();
-      targetMousePos.current = { x: (e.clientX - rect.left) / rect.width, y: 1.0 - (e.clientY - rect.top) / rect.height };
+      const x = (e.clientX - rect.left) / rect.width;
+      const y = 1.0 - (e.clientY - rect.top) / rect.height;
+      targetMousePos.current = { x, y };
       targetMouseActive.current = 1.0;
     }
 
@@ -304,7 +307,7 @@ export default function Galaxy({
         ctn.removeEventListener('mousemove', handleMouseMove);
         ctn.removeEventListener('mouseleave', handleMouseLeave);
       }
-      if (gl.canvas.parentNode === ctn) ctn.removeChild(gl.canvas);
+      ctn.removeChild(gl.canvas);
       gl.getExtension('WEBGL_lose_context')?.loseContext();
     };
   }, [
