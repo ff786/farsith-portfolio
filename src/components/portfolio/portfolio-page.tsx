@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion, useMotionValueEvent, useScroll, useSpring } from 'framer-motion';
+import { StructureFlowCollection } from '@designcodeio/threeui';
+import '@designcodeio/threeui/style.css';
 import { site } from '../../data/site';
 import { journeyStages } from './journey-stages';
 import { Nav } from './nav';
