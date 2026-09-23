@@ -7,6 +7,7 @@ import { journeyStages } from './journey-stages';
 import { Nav } from './nav';
 import { AvatarStage } from './avatar-stage';
 import { JourneyProgress } from './journey-progress';
+import Galaxy from './Galaxy';
 import { AboutChapter, ContactChapter, ExperienceChapter, HeroChapter, ProjectsChapter, ToolkitChapter } from './chapters';
 
 const DESKTOP_BREAKPOINT = 980;
@@ -173,6 +174,16 @@ export function PortfolioPage() {
 
     <main ref={journeyRef} className="portfolio-journey">
       <div className="journey-sticky">
+        <div className="journey-galaxy" aria-hidden="true">
+          <Galaxy
+            mouseRepulsion={true}
+            mouseInteraction={true}
+            density={1.5}
+            glowIntensity={0.5}
+            saturation={0.8}
+            hueShift={240}
+          />
+        </div>
         <AvatarStage progress={journeyProgress} activeStage={activeStage} />
         <JourneyProgress activeStage={activeStage} />
       </div>
