@@ -1,6 +1,7 @@
 import { AnimatePresence, motion, useReducedMotion, useTransform, type MotionValue } from 'framer-motion';
 import { useState, type ReactNode } from 'react';
 import { site, stack, projects } from '../../data/site';
+import { InfiniteTechSpiral } from './infinite-tech-spiral';
 
 type ChapterProps = { progress: MotionValue<number> };
 type Project = (typeof projects)[number];
@@ -91,19 +92,15 @@ export function ProjectsChapter({ progress, selectedProjectId, onSelectProject }
 }
 
 export function ToolkitChapter({ progress }: ChapterProps) {
-  const reducedMotion = useReducedMotion();
   return <section id="toolkit" className="journey-chapter toolkit-chapter">
     <ChapterReveal progress={progress} center={0.565}>
-      <div className="chapter-copy"><div className="section-kicker">04 / MY TOOLKIT</div><h2>THE TOOLS<br /><span>BEHIND THE WORK.</span></h2><p>A practical stack spanning interface design, application logic, data, infrastructure and applied machine learning.</p></div>
-      <div className="toolkit-system">
-        <div className="toolkit-core"><span>STACK</span><b>{String(stack.length).padStart(2, '0')}</b><small>TOOLS IN ROTATION</small></div>
-        <div className="toolkit-stream" aria-label="Technology stack">
-          {stack.map(([name, desc], index) => (
-            <motion.div key={name} className="orbit-tech" initial={reducedMotion ? false : { opacity: 0, y: 22 }} whileInView={reducedMotion ? undefined : { opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.25 }} transition={{ duration: 0.45, delay: Math.min(index * 0.025, 0.45) }} whileHover={reducedMotion ? undefined : { y: -5, scale: 1.025 }}>
-              <span>{String(index + 1).padStart(2, '0')}</span><b>{name}</b><small>{desc}</small>
-            </motion.div>
-          ))}
+      <div className="toolkit-layout">
+        <div className="chapter-copy">
+          <div className="section-kicker">04 / MY TOOLKIT</div>
+          <h2>THE TOOLS<br /><span>BEHIND THE WORK.</span></h2>
+          <p>A practical stack spanning interface design, application logic, data, infrastructure and applied machine learning.</p>
         </div>
+        <InfiniteTechSpiral items={stack} progress={progress} />
       </div>
     </ChapterReveal>
   </section>;
