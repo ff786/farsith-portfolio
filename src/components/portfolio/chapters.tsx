@@ -100,7 +100,7 @@ export function ToolkitChapter({ progress }: ChapterProps) {
           <h2>THE TOOLS<br /><span>BEHIND THE WORK.</span></h2>
           <p>A practical stack spanning interface design, application logic, data, infrastructure and applied machine learning.</p>
         </div>
-        <div className="toolkit-spiral-stage">
+        <div className="toolkit-spiral-stage toolkit-spiral-stage--left">
           <InfiniteTechSpiral items={stack} progress={progress} />
         </div>
       </div>
