@@ -114,13 +114,10 @@ function AvatarStage({ progress, activeStage }: { progress: MotionValue<number>;
   const avatarScale = useTransform(progress, [0, 0.18, 0.42, 0.7, 1], [1, 1.035, 0.97, 1.055, 1]);
   const avatarRotate = useTransform(progress, [0, 0.2, 0.4, 0.62, 0.82, 1], [0, -1.5, 2.5, -3, 2, 0]);
   // Deliberate left → right → left → right staging across the six chapters.
-  // The camera is sized as a dedicated lane, so these percentages are
-  // relative to the avatar stage itself. 60% of the 40vw desktop camera
-  // produces an intentional quarter-screen lane shift without jumping.
   const cameraXRaw = useTransform(
     progress,
     [0, 0.2, 0.4, 0.6, 0.8, 1],
-    ['-60%', '60%', '-60%', '60%', '-60%', '60%']
+    ['-15%', '15%', '-15%', '15%', '-15%', '15%']
   );
   const cameraX = useSpring(cameraXRaw, { stiffness: 90, damping: 22, mass: 0.7 });
   const cameraZRaw = useTransform(progress, [0, 0.2, 0.4, 0.6, 0.8, 1], [0, 18, 28, 18, 28, 0]);
