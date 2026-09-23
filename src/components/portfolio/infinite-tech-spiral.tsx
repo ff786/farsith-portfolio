@@ -151,11 +151,7 @@ export function InfiniteTechSpiral({ items, progress }: InfiniteTechSpiralProps)
         ))}
       </div>
 
-      <div className="infinite-tech-spiral__center" aria-hidden="true">
-        <span>TECH STACK</span>
-        <b>{String(items.length).padStart(2, '0')}</b>
-        <small>TOOLS IN ROTATION</small>
-      </div>
+
     </div>
   );
 }
