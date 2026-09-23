@@ -7,7 +7,7 @@ export const site = {
   linkedin: 'https://www.linkedin.com/in/farsith-fawzer-b7051120',
 };
 
-export const stack = [
+export const stack: [string, string][] = [
   ['React', 'Component-driven interfaces.'], ['Next.js', 'Modern application architecture.'],
   ['TypeScript', 'Typed, maintainable frontend systems.'], ['Java', 'Backend application development.'],
   ['Spring Boot', 'REST APIs and business services.'], ['Python', 'Application and ML workflows.'],
