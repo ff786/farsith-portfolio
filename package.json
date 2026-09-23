@@ -8,6 +8,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@designcodeio/threeui": "^1.2.0",
     "@react-three/drei": "^10.7.6",
     "@react-three/fiber": "^9.3.0",
     "framer-motion": "^12.23.12",
@@ -15,8 +16,7 @@
     "next": "^15.5.3",
     "react": "19.2.0",
     "react-dom": "19.2.0",
-    "three": "^0.179.1",
-    "@designcodeio/threeui": "1.2.0"
+    "three": "^0.179.1"
   },
   "devDependencies": {
     "@types/node": "^22.18.0",

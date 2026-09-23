@@ -740,7 +740,7 @@
   }
   .toolkit-spiral-stage{
     width:100%;
-    margin-left:0;
+    margin-left:40px;
   }
   .toolkit-spiral-stage--left{
     transform:none;
