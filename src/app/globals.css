@@ -277,3 +277,9 @@
   .journey-progress{display:none}
   .stage-caption{left:18px;bottom:18px}
 }
+
+
+/* Keep the character itself spatially separated from the alternating copy. */
+.avatar-camera{left:50%;right:auto;width:min(40vw,620px);margin-left:min(-20vw,-310px)}
+@media(max-width:980px){.avatar-camera{width:min(54vw,520px);margin-left:min(-27vw,-260px)}}
+@media(max-width:640px){.avatar-camera{width:72vw;margin-left:-36vw}}
