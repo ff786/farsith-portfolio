@@ -283,3 +283,72 @@
 .avatar-camera{left:50%;right:auto;width:min(40vw,620px);margin-left:min(-20vw,-310px)}
 @media(max-width:980px){.avatar-camera{width:min(54vw,520px);margin-left:min(-27vw,-260px)}}
 @media(max-width:640px){.avatar-camera{width:72vw;margin-left:-36vw}}
+
+
+/* -------------------------------------------------------------------------- */
+/* Cinematic lane choreography                                                */
+/* -------------------------------------------------------------------------- */
+.avatar-camera{
+  will-change:transform;
+}
+.avatar-halo{
+  transition:opacity .8s ease,filter .8s ease;
+}
+.avatar-floor{
+  transition:opacity .8s ease,transform .8s ease;
+}
+.project-environment{
+  will-change:transform,opacity;
+}
+.workbench-window{
+  box-shadow:0 35px 100px rgba(0,0,0,.48),0 0 90px rgba(74,169,255,.09);
+}
+@media(max-width:980px){
+  .avatar-camera{width:min(54vw,520px);margin-left:min(-27vw,-260px)}
+  .project-environment{inset:7% 3% 8%}
+}
+@media(max-width:640px){
+  .avatar-camera{width:72vw;margin-left:-36vw}
+  .project-environment{inset:4% 0 6%}
+}
+
+/* Progressive enhancement: chapter copy breathes into the viewport instead of
+   appearing as a hard section-to-section swap. */
+@supports (animation-timeline: view()){
+  .journey-chapter .chapter-copy,
+  .journey-chapter .chapter-card,
+  .journey-chapter .project-rail,
+  .journey-chapter .toolkit-orbit,
+  .journey-chapter .experience-path,
+  .journey-chapter .chapter-note{
+    animation:chapterBreath linear both;
+    animation-timeline:view();
+    animation-range:entry 0% cover 34%;
+  }
+  @keyframes chapterBreath{
+    from{opacity:.18;transform:translateY(42px);filter:blur(7px)}
+    to{opacity:1;transform:translateY(0);filter:blur(0)}
+  }
+}
+
+/* Give the two composition lanes a restrained spatial anchor without turning
+   the portfolio into a visible two-column grid. */
+.avatar-stage:after{
+  content:"";
+  position:absolute;
+  top:15%;
+  bottom:13%;
+  left:50%;
+  width:1px;
+  background:linear-gradient(to bottom,transparent,rgba(255,255,255,.045) 20%,rgba(255,255,255,.045) 80%,transparent);
+  opacity:.28;
+  z-index:2;
+  pointer-events:none;
+  transition:opacity .8s ease;
+}
+.avatar-stage.stage-2:after{
+  opacity:.12;
+}
+@media(max-width:640px){
+  .avatar-stage:after{display:none}
+}
