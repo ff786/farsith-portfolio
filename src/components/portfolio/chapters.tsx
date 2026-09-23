@@ -162,7 +162,9 @@ function ProjectDeck({ selectedId, onSelect }: { selectedId: string; onSelect: (
 export function ProjectsChapter({ progress, selectedProjectId, onSelectProject }: ChapterProps & { selectedProjectId: string; onSelectProject: (project: Project) => void }) {
   return <section id="projects" className="journey-chapter projects-chapter">
     <ChapterReveal progress={progress} center={0.395}>
-      <div className="chapter-copy projects-chapter-copy"><div className="section-kicker">03 / SELECTED WORK</div><p>Five builds. One system. Hover a project to bring its interface into focus.</p></div>
+      <div className="chapter-copy projects-chapter-copy">
+        <div className="section-kicker">03 / SELECTED WORK</div>
+        <p>Five builds. One system. Hover a project to bring its interface into focus.</p></div>
       <ProjectDeck selectedId={selectedProjectId} onSelect={onSelectProject} />
     </ChapterReveal>
   </section>;
