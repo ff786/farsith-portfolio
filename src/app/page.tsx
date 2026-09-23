@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
-import { motion, useScroll, useTransform, type MotionValue } from 'framer-motion';
+import { motion, useScroll, useSpring, useTransform, type MotionValue } from 'framer-motion';
 import { site, stack, projects } from '../data/site';
 
 const journeyStages = [
@@ -114,12 +114,14 @@ function AvatarStage({ progress, activeStage }: { progress: MotionValue<number>;
   const avatarScale = useTransform(progress, [0, 0.18, 0.42, 0.7, 1], [1, 1.035, 0.97, 1.055, 1]);
   const avatarRotate = useTransform(progress, [0, 0.2, 0.4, 0.62, 0.82, 1], [0, -1.5, 2.5, -3, 2, 0]);
   // Deliberate left → right → left → right staging across the six chapters.
-  const cameraX = useTransform(
+  const cameraXRaw = useTransform(
     progress,
     [0, 0.2, 0.4, 0.6, 0.8, 1],
-    ['-12%', '12%', '-11%', '13%', '-10%', '14%']
+    ['-15%', '15%', '-15%', '15%', '-15%', '15%']
   );
-  const cameraZ = useTransform(progress, [0, 0.2, 0.4, 0.6, 0.8, 1], [0, 18, 28, 18, 28, 0]);
+  const cameraX = useSpring(cameraXRaw, { stiffness: 90, damping: 22, mass: 0.7 });
+  const cameraZRaw = useTransform(progress, [0, 0.2, 0.4, 0.6, 0.8, 1], [0, 18, 28, 18, 28, 0]);
+  const cameraZ = useSpring(cameraZRaw, { stiffness: 80, damping: 24, mass: 0.8 });
 
   return (
     <div className={`avatar-stage stage-${activeStage}`}>
