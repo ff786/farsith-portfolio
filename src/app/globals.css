@@ -2894,3 +2894,89 @@ footer span, footer small, footer p {
   .project-orbit__arc,
   .project-orbit__sun{transition:none}
 }
+
+
+/* -------------------------------------------------------------------------- */
+/* Project chapter layout pass — editorial hierarchy over the orbit.           */
+/* -------------------------------------------------------------------------- */
+.projects-chapter{
+  justify-content:flex-start;
+  padding-top:clamp(104px,12vh,138px);
+  padding-bottom:clamp(72px,8vh,108px);
+}
+.projects-chapter .chapter-reveal{
+  position:relative;
+  width:100%;
+}
+.projects-chapter .projects-chapter-copy{
+  position:relative;
+  inset:auto;
+  z-index:12;
+  margin:0 0 clamp(24px,3.2vh,38px);
+  pointer-events:none;
+}
+.projects-chapter-copy .section-kicker{
+  margin:0;
+}
+.projects-chapter-copy p{
+  margin:9px 0 0;
+  max-width:430px;
+  font-size:clamp(10px,.72vw,12px);
+  line-height:1.65;
+}
+.projects-chapter .project-orbit{
+  margin:0 auto;
+  transform:translateY(-4px);
+}
+.project-orbit{
+  height:clamp(500px,62svh,570px);
+}
+.project-orbit__eyebrow{
+  top:2px;
+}
+.project-orbit__sun{
+  width:156px;
+  height:156px;
+}
+.project-orbit__sun strong{
+  font-size:26px;
+}
+.project-orbit-detail{
+  width:min(470px,78%);
+  padding:16px;
+}
+.project-orbit-detail__visual{
+  height:146px;
+}
+.project-orbit-detail__copy h3{
+  font-size:28px;
+}
+.project-orbit-detail__copy p{
+  max-width:none;
+}
+@media(max-width:980px){
+  .projects-chapter{
+    padding-top:92px;
+  }
+  .projects-chapter .projects-chapter-copy{
+    margin-bottom:22px;
+  }
+  .projects-chapter .project-orbit{
+    width:min(100%,720px);
+  }
+}
+@media(max-width:640px){
+  .projects-chapter{
+    padding:78px 18px 88px;
+  }
+  .projects-chapter .projects-chapter-copy{
+    margin-bottom:16px;
+  }
+  .projects-chapter-copy p{
+    max-width:300px;
+  }
+  .projects-chapter .project-orbit{
+    height:492px;
+    transform:none;
+  }
+}
