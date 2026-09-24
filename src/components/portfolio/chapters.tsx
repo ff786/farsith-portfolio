@@ -23,7 +23,7 @@ export function HeroChapter({ progress }: ChapterProps) {
         <div className="eyebrow">COLOMBO · SRI LANKA / SOFTWARE DEVELOPER</div>
         <h1>FARSITH<br /><em>FAWZER</em></h1>
         <p>Building ideas into <strong>real-world software.</strong></p>
-        <div className="hero-actions"><a className="btn primary" href="#projects">Explore My Work <span>↘</span></a><a className="btn ghost" href={`mailto:${site.email}`}>Let’s Connect <span>↗</span></a></div>
+        <div className="hero-actions"><a className="btn primary" href="/#projects">Explore My Work <span>↘</span></a><a className="btn ghost" href={`mailto:${site.email}`}>Let’s Connect <span>↗</span></a></div>
         <div className="hero-meta"><span>FULL-STACK</span><span>WEB APPLICATIONS</span><span>SOFTWARE ENGINEERING</span></div>
       </div>
     </ChapterReveal>
